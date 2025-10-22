@@ -809,17 +809,29 @@ html {
     height: 40px;
     white-space: nowrap;
 }
+.results-tables .leaderboard-table {
+    border-collapse: collapse;
+    width: 100%;
+}
 
+
+.results-tables .leaderboard-table thead tr:nth-child(2) th:nth-child(2n+1),
+.results-tables .leaderboard-table thead tr:nth-child(3) th:nth-child(4n+1),
+.results-tables .leaderboard-table tbody td:nth-child(4n+1),
+.results-tables .attack-results-table tbody td:nth-child(2n+1)
+{
+    border-right: 2px solid #ddd;
+}
 .results-tables .leaderboard-table th:first-child {
     text-align: left;
     min-width: 200px;
 }
 
-/* 确保表头单元格正确对齐 */
 .results-tables .leaderboard-table thead tr:first-child th {
     font-size: 0.9rem;
     font-weight: 700;
     padding: 1.2rem 0.75rem;
+    border-right: 2px solid #ddd;
 }
 
 .results-tables .leaderboard-table thead tr:last-child th {
@@ -829,7 +841,6 @@ html {
     background: #0a7ba8;
 }
 
-/* 确保所有表头都居中对齐 */
 .results-tables .leaderboard-table thead th {
     text-align: center !important;
     vertical-align: middle;
