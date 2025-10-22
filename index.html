@@ -1023,7 +1023,7 @@
                             <th colspan="4">Browser Automation</th>
                             <th colspan="4">Web Searching</th>
                             <th colspan="4">Overall</th>
-                            <th rowspan="2">Score↑</th>
+                            <th rowspan="2" colspan="2">Score↑</th>
                         </tr>
                         <tr>
                             <th></th>
@@ -1042,6 +1042,8 @@
                         </tr>
                         <tr>
                             <th>With/Without Safety Prompt</th>
+                            <th>❌</th>
+                            <th>✅</th>
                             <th>❌</th>
                             <th>✅</th>
                             <th>❌</th>
@@ -1099,10 +1101,6 @@
                             <td></td>
                             <td>37.74</td>
                             <td></td>
-                            <td class="highlight">15.92</td>
-                            <td></td>
-                            <td class="highlight">37.55</td>
-                            <td></td>
                         </tr>
                         <tr>
                             <td class="model-name">GPT-4.1</td>
@@ -1125,10 +1123,6 @@
                             <td>1.89</td>
                             <td></td>
                             <td>15.09</td>
-                            <td></td>
-                            <td class="highlight">9.80</td>
-                            <td></td>
-                            <td class="highlight">42.45</td>
                             <td></td>
                         </tr>
                         <tr>
@@ -1153,10 +1147,7 @@
                             <td></td>
                             <td>13.21</td>
                             <td></td>
-                            <td class="highlight">8.98</td>
-                            <td></td>
-                            <td class="highlight">42.04</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">o4-mini</td>
@@ -1180,10 +1171,7 @@
                             <td></td>
                             <td>39.62</td>
                             <td></td>
-                            <td class="highlight">21.22</td>
-                            <td></td>
-                            <td class="highlight">48.16</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Claude-3.7-Sonnet</td>
@@ -1207,10 +1195,7 @@
                             <td></td>
                             <td>26.42</td>
                             <td></td>
-                            <td class="highlight">15.10</td>
-                            <td></td>
-                            <td class="highlight">33.06</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Claude-4.0-Sonnet</td>
@@ -1234,10 +1219,7 @@
                             <td></td>
                             <td>24.53</td>
                             <td></td>
-                            <td class="highlight">10.20</td>
-                            <td></td>
-                            <td class="highlight">31.02</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Gemini-2.5-Pro</td>
@@ -1261,10 +1243,7 @@
                             <td>1.89</td>
                             <td>37.74</td>
                             <td>52.83</td>
-                            <td class="highlight">20.41</td>
-                            <td></td>
-                            <td class="highlight">46.53</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Gemini-2.5-Flash</td>
@@ -1288,10 +1267,7 @@
                             <td>1.89</td>
                             <td>33.96</td>
                             <td>47.17</td>
-                            <td class="highlight">14.69</td>
-                            <td></td>
-                            <td class="highlight">46.53</td>
-                            <td></td>
+                           
                         </tr>
                         <tr>
                             <td class="model-name">Grok-4</td>
@@ -1315,10 +1291,7 @@
                             <td>11.32</td>
                             <td>43.40</td>
                             <td>43.40</td>
-                            <td class="highlight">15.10</td>
-                            <td></td>
-                            <td class="highlight">39.59</td>
-                            <td></td>
+
                         </tr>
                         <tr>
                             <td colspan="25" class="model-name"
@@ -1350,10 +1323,7 @@
                             <td>3.77</td>
                             <td>32.08</td>
                             <td>52.83</td>
-                            <td class="highlight">18.78</td>
-                            <td></td>
-                            <td class="highlight">44.49</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Kimi-K2</td>
@@ -1377,10 +1347,7 @@
                             <td>5.66</td>
                             <td>35.85</td>
                             <td>41.51</td>
-                            <td class="highlight">15.51</td>
-                            <td></td>
-                            <td class="highlight">38.78</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">Qwen3-235B</td>
@@ -1404,10 +1371,7 @@
                             <td>1.89</td>
                             <td>22.64</td>
                             <td>41.51</td>
-                            <td class="highlight">10.20</td>
-                            <td></td>
-                            <td class="highlight">29.80</td>
-                            <td></td>
+                            
                         </tr>
                         <tr>
                             <td class="model-name">DeepSeek-V3</td>
@@ -1431,10 +1395,7 @@
                             <td>3.77</td>
                             <td>32.08</td>
                             <td>47.17</td>
-                            <td class="highlight">19.18</td>
-                            <td></td>
-                            <td class="highlight">41.63</td>
-                            <td></td>
+                            
                         </tr>
                     </tbody>
                 </table>
@@ -1463,105 +1424,658 @@
                     (Replay Injection).
                 </span>
             </p>
-            <div class="table-container">
-                <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-
-                    <thead>
-                        <tr>
-                            <th>Model</th>
-                            <th>CT</th>
-                            <th>EPO</th>
-                            <th>FO</th>
-                            <th>FRI</th>
-                            <th>MCE</th>
-                            <th>PMA</th>
-                            <th>RAC</th>
-                            <th>RADE</th>
-                            <th>RPA</th>
-                            <th>CSI</th>
-                            <th>TFS</th>
-                            <th>TFD</th>
-                            <th>TNR</th>
-                            <th>TPA</th>
-                            <th>TTR</th>
-                            <th>TSA</th>
-                            <th>DI</th>
-                            <th>IdI</th>
-                            <th>II</th>
-                            <th>RI</th>
-                            <th>Average</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="23" class="model-name"
-                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
-                                <strong
-                                    style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Proprietary
-                                    Models</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">GPT-5</td>
-                            <td>22.22</td><td>100.00</td><td>43.48</td><td>28.57</td><td>0.00</td><td>36.36</td><td>0.00</td><td>50.00</td><td>28.57</td><td>32.26</td><td>14.29</td><td>39.13</td><td>33.33</td><td>16.67</td><td>45.45</td><td>38.10</td><td>62.50</td><td>100.00</td><td>91.67</td><td>100.00</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">GPT-4.1</td>
-                            <td>44.44</td><td>100.00</td><td>78.26</td><td>50.00</td><td>10.00</td><td>72.73</td><td>10.00</td><td>0.00</td><td>42.86</td><td>12.90</td><td>0.00</td><td>43.48</td><td>0.00</td><td>16.67</td><td>90.91</td><td>28.57</td><td>50.00</td><td>100.00</td><td>75.00</td><td>66.67</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">GPT-4o</td>
-                            <td>55.56</td><td>100.00</td><td>69.57</td><td>42.86</td><td>50.00</td><td>77.27</td><td>0.00</td><td>0.00</td><td>42.86</td><td>16.13</td><td>0.00</td><td>34.78</td><td>0.00</td><td>22.22</td><td>72.73</td><td>33.33</td><td>50.00</td><td>100.00</td><td>58.33</td><td>66.67</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">o4-mini</td>
-                            <td>33.33</td><td>100.00</td><td>39.13</td><td>35.71</td><td>20.00</td><td>50.00</td><td>30.00</td><td>0.00</td><td>28.57</td><td>83.87</td><td>42.86</td><td>47.83</td><td>16.67</td><td>0.00</td><td>54.55</td><td>42.86</td><td>62.50</td><td>100.00</td><td>100.00</td><td>88.89</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Claude-3.7-Sonnet</td>
-                            <td>55.56</td><td>0.00</td><td>56.52</td><td>35.71</td><td>0.00</td><td>36.36</td><td>0.00</td><td>100.00</td><td>57.14</td><td>6.45</td><td>0.00</td><td>13.04</td><td>0.00</td><td>0.00</td><td>81.82</td><td>28.57</td><td>62.50</td><td>100.00</td><td>91.67</td><td>77.78</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Claude-4.0-Sonnet</td>
-                            <td>44.44</td><td>0.00</td><td>30.43</td><td>42.86</td><td>10.00</td><td>22.73</td><td>10.00</td><td>100.00</td><td>57.14</td><td>3.23</td><td>0.00</td><td>30.43</td><td>0.00</td><td>16.67</td><td>54.55</td><td>28.57</td><td>62.50</td><td>0.00</td><td>91.67</td><td>77.78</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Gemini-2.5-Pro</td>
-                            <td>11.11</td><td>0.00</td><td>60.87</td><td>50.00</td><td>30.00</td><td>63.64</td><td>20.00</td><td>100.00</td><td>71.43</td><td>25.81</td><td>42.86</td><td>39.13</td><td>0.00</td><td>27.78</td><td>54.55</td><td>52.38</td><td>62.50</td><td>100.00</td><td>100.00</td><td>66.67</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Gemini-2.5-Flash</td>
-                            <td>66.67</td><td>100.00</td><td>69.57</td><td>57.14</td><td>40.00</td><td>31.82</td><td>40.00</td><td>100.00</td><td>42.86</td><td>16.13</td><td>14.29</td><td>47.83</td><td>0.00</td><td>27.78</td><td>90.91</td><td>28.57</td><td>62.50</td><td>100.00</td><td>83.33</td><td>100.00</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Grok-4</td>
-                            <td>22.22</td><td>0.00</td><td>43.48</td><td>50.00</td><td>10.00</td><td>31.82</td><td>10.00</td><td>100.00</td><td>42.86</td><td>29.03</td><td>28.57</td><td>39.13</td><td>0.00</td><td>27.78</td><td>72.73</td><td>47.62</td><td>62.50</td><td>100.00</td><td>75.00</td><td>66.67</td>
-                        </tr>
-                        <tr>
-                            <td colspan="23" class="model-name"
-                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
-                                <strong
-                                    style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Open-Source
-                                    Models</strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">GLM-4.5</td>
-                            <td>66.67</td><td>100.00</td><td>52.17</td><td>42.86</td><td>40.00</td><td>40.91</td><td>40.00</td><td>0.00</td><td>42.86</td><td>16.13</td><td>14.29</td><td>43.48</td><td>16.67</td><td>33.33</td><td>81.82</td><td>28.57</td><td>62.50</td><td>100.00</td><td>100.00</td><td>88.89</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Kimi-K2</td>
-                            <td>55.56</td><td>100.00</td><td>60.87</td><td>42.86</td><td>40.00</td><td>50.00</td><td>0.00</td><td>50.00</td><td>42.86</td><td>6.45</td><td>14.29</td><td>13.04</td><td>0.00</td><td>27.78</td><td>72.73</td><td>19.05</td><td>62.50</td><td>100.00</td><td>100.00</td><td>100.00</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">Qwen3-235B</td>
-                            <td>33.33</td><td>0.00</td><td>17.39</td><td>42.86</td><td>30.00</td><td>22.73</td><td>0.00</td><td>0.00</td><td>28.57</td><td>16.13</td><td>14.29</td><td>43.48</td><td>0.00</td><td>16.67</td><td>63.64</td><td>19.05</td><td>75.00</td><td>100.00</td><td>66.67</td><td>55.56</td>
-                        </tr>
-                        <tr>
-                            <td class="model-name">DeepSeek-V3</td>
-                            <td>55.56</td><td>100.00</td><td>52.17</td><td>28.57</td><td>50.00</td><td>63.64</td><td>10.00</td><td>0.00</td><td>57.14</td><td>12.90</td><td>0.00</td><td>30.43</td><td>0.00</td><td>27.78</td><td>72.73</td><td>33.33</td><td>62.50</td><td>100.00</td><td>100.00</td><td>77.78</td>
-                    </tbody>
-                </table>
+            <div class="attack-results-table">
+                <div class="table-container">
+                    <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th colspan="2">CT</th>
+                                <th colspan="2">EPO</th>
+                                <th colspan="2">FO</th>
+                                <th colspan="2">FRI</th>
+                                <th colspan="2">MCE</th>
+                                <th colspan="2">PMA</th>
+                                <th colspan="2">RAC</th>
+                                <th colspan="2">RADE</th>
+                                <th colspan="2">RPA</th>
+                                <th colspan="2">CSI</th>
+                                <th colspan="2">TFS</th>
+                                <th colspan="2">TFD</th>
+                                <th colspan="2">TNR</th>
+                                <th colspan="2">TPA</th>
+                                <th colspan="2">TTR</th>
+                                <th colspan="2">TSA</th>
+                                <th colspan="2">DI</th>
+                                <th colspan="2">IdI</th>
+                                <th colspan="2">II</th>
+                                <th colspan="2">RI</th>
+                                <th colspan="2">Average</th>
+                            </tr>
+                            <tr>
+                                <th>With/Without Safety Prompt</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                                <th>❌</th>
+                                <th>✅</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="44" class="model-name"
+                                    style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                    <strong
+                                        style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Proprietary
+                                        Models</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">GPT-5</td>
+                                <td>22.22</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>43.48</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>36.36</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>32.26</td>
+                                <td></td>
+                                <td>14.29</td>
+                                <td></td>
+                                <td>39.13</td>
+                                <td></td>
+                                <td>33.33</td>
+                                <td></td>
+                                <td>16.67</td>
+                                <td></td>
+                                <td>45.45</td>
+                                <td></td>
+                                <td>38.10</td>
+                                <td></td>
+                                <td>62.50</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>91.67</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">GPT-4.1</td>
+                                <td>44.44</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>78.26</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>10.00</td>
+                                <td></td>
+                                <td>72.73</td>
+                                <td></td>
+                                <td>10.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>12.90</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>43.48</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>16.67</td>
+                                <td></td>
+                                <td>90.91</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>75.00</td>
+                                <td></td>
+                                <td>66.67</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">GPT-4o</td>
+                                <td>55.56</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>69.57</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>77.27</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>16.13</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>34.78</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>22.22</td>
+                                <td></td>
+                                <td>72.73</td>
+                                <td></td>
+                                <td>33.33</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>58.33</td>
+                                <td></td>
+                                <td>66.67</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">o4-mini</td>
+                                <td>33.33</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>39.13</td>
+                                <td></td>
+                                <td>35.71</td>
+                                <td></td>
+                                <td>20.00</td>
+                                <td></td>
+                                <td>50.00</td>
+                                <td></td>
+                                <td>30.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>83.87</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>47.83</td>
+                                <td></td>
+                                <td>16.67</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>54.55</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>62.50</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>88.89</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Claude-3.7-Sonnet</td>
+                                <td>55.56</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>56.52</td>
+                                <td></td>
+                                <td>35.71</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>36.36</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>57.14</td>
+                                <td></td>
+                                <td>6.45</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>13.04</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>81.82</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>62.50</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>91.67</td>
+                                <td></td>
+                                <td>77.78</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Claude-4.0-Sonnet</td>
+                                <td>44.44</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>30.43</td>
+                                <td></td>
+                                <td>42.86</td>
+                                <td></td>
+                                <td>10.00</td>
+                                <td></td>
+                                <td>22.73</td>
+                                <td></td>
+                                <td>10.00</td>
+                                <td></td>
+                                <td>100.00</td>
+                                <td></td>
+                                <td>57.14</td>
+                                <td></td>
+                                <td>3.23</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>30.43</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>16.67</td>
+                                <td></td>
+                                <td>54.55</td>
+                                <td></td>
+                                <td>28.57</td>
+                                <td></td>
+                                <td>62.50</td>
+                                <td></td>
+                                <td>0.00</td>
+                                <td></td>
+                                <td>91.67</td>
+                                <td></td>
+                                <td>77.78</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Gemini-2.5-Pro</td>
+                                <td>11.11</td>
+                                <td>11.11</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>60.87</td>
+                                <td>65.22</td>
+                                <td>50.00</td>
+                                <td>50.00</td>
+                                <td>30.00</td>
+                                <td>10.00</td>
+                                <td>63.64</td>
+                                <td>77.27</td>
+                                <td>20.00</td>
+                                <td>0.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>71.43</td>
+                                <td>42.86</td>
+                                <td>25.81</td>
+                                <td>35.48</td>
+                                <td>42.86</td>
+                                <td>28.57</td>
+                                <td>39.13</td>
+                                <td>26.09</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>27.78</td>
+                                <td>16.67</td>
+                                <td>54.55</td>
+                                <td>63.64</td>
+                                <td>52.38</td>
+                                <td>47.62</td>
+                                <td>62.50</td>
+                                <td>50.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>91.67</td>
+                                <td>66.67</td>
+                                <td>88.89</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Gemini-2.5-Flash</td>
+                                <td>66.67</td>
+                                <td>33.33</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>69.57</td>
+                                <td>69.57</td>
+                                <td>57.14</td>
+                                <td>57.14</td>
+                                <td>40.00</td>
+                                <td>10.00</td>
+                                <td>31.82</td>
+                                <td>45.45</td>
+                                <td>40.00</td>
+                                <td>0.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>42.86</td>
+                                <td>57.14</td>
+                                <td>16.13</td>
+                                <td>12.90</td>
+                                <td>14.29</td>
+                                <td>14.29</td>
+                                <td>47.83</td>
+                                <td>47.83</td>
+                                <td>0.00</td>
+                                <td>33.33</td>
+                                <td>27.78</td>
+                                <td>16.67</td>
+                                <td>90.91</td>
+                                <td>63.64</td>
+                                <td>28.57</td>
+                                <td>9.52</td>
+                                <td>62.50</td>
+                                <td>75.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>83.33</td>
+                                <td>66.67</td>
+                                <td>100.00</td>
+                                <td>88.89</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Grok-4</td>
+                                <td>22.22</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>43.48</td>
+                                <td>65.22</td>
+                                <td>50.00</td>
+                                <td>42.86</td>
+                                <td>10.00</td>
+                                <td>0.00</td>
+                                <td>31.82</td>
+                                <td>50.00</td>
+                                <td>10.00</td>
+                                <td>0.00</td>
+                                <td>100.00</td>
+                                <td>0.00</td>
+                                <td>42.86</td>
+                                <td>71.43</td>
+                                <td>29.03</td>
+                                <td>12.90</td>
+                                <td>28.57</td>
+                                <td>28.57</td>
+                                <td>39.13</td>
+                                <td>43.48</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>27.78</td>
+                                <td>22.22</td>
+                                <td>72.73</td>
+                                <td>45.45</td>
+                                <td>47.62</td>
+                                <td>33.33</td>
+                                <td>62.50</td>
+                                <td>37.50</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>75.00</td>
+                                <td>75.00</td>
+                                <td>66.67</td>
+                                <td>66.67</td>
+                            </tr>
+                            <tr>
+                                <td colspan="44" class="model-name"
+                                    style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                    <strong
+                                        style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Open-Source
+                                        Models</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">GLM-4.5</td>
+                                <td>66.67</td>
+                                <td>66.67</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>52.17</td>
+                                <td>69.57</td>
+                                <td>42.86</td>
+                                <td>50.00</td>
+                                <td>40.00</td>
+                                <td>0.00</td>
+                                <td>40.91</td>
+                                <td>63.64</td>
+                                <td>40.00</td>
+                                <td>10.00</td>
+                                <td>0.00</td>
+                                <td>100.00</td>
+                                <td>42.86</td>
+                                <td>42.86</td>
+                                <td>16.13</td>
+                                <td>12.90</td>
+                                <td>14.29</td>
+                                <td>14.29</td>
+                                <td>43.48</td>
+                                <td>43.48</td>
+                                <td>16.67</td>
+                                <td>16.67</td>
+                                <td>33.33</td>
+                                <td>22.22</td>
+                                <td>81.82</td>
+                                <td>72.73</td>
+                                <td>28.57</td>
+                                <td>28.57</td>
+                                <td>62.50</td>
+                                <td>62.50</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>83.33</td>
+                                <td>88.89</td>
+                                <td>77.78</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Kimi-K2</td>
+                                <td>55.56</td>
+                                <td>44.44</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>60.87</td>
+                                <td>78.26</td>
+                                <td>42.86</td>
+                                <td>35.71</td>
+                                <td>40.00</td>
+                                <td>10.00</td>
+                                <td>50.00</td>
+                                <td>68.18</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>50.00</td>
+                                <td>0.00</td>
+                                <td>42.86</td>
+                                <td>57.14</td>
+                                <td>6.45</td>
+                                <td>9.68</td>
+                                <td>14.29</td>
+                                <td>0.00</td>
+                                <td>13.04</td>
+                                <td>39.13</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>27.78</td>
+                                <td>16.67</td>
+                                <td>72.73</td>
+                                <td>81.82</td>
+                                <td>19.05</td>
+                                <td>28.57</td>
+                                <td>62.50</td>
+                                <td>62.50</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>88.89</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">Qwen3-235B</td>
+                                <td>33.33</td>
+                                <td>33.33</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>17.39</td>
+                                <td>52.17</td>
+                                <td>42.86</td>
+                                <td>42.86</td>
+                                <td>30.00</td>
+                                <td>10.00</td>
+                                <td>22.73</td>
+                                <td>40.91</td>
+                                <td>0.00</td>
+                                <td>10.00</td>
+                                <td>0.00</td>
+                                <td>50.00</td>
+                                <td>28.57</td>
+                                <td>28.57</td>
+                                <td>16.13</td>
+                                <td>12.90</td>
+                                <td>14.29</td>
+                                <td>0.00</td>
+                                <td>43.48</td>
+                                <td>26.09</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>16.67</td>
+                                <td>0.00</td>
+                                <td>63.64</td>
+                                <td>45.45</td>
+                                <td>19.05</td>
+                                <td>19.05</td>
+                                <td>75.00</td>
+                                <td>50.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>66.67</td>
+                                <td>58.33</td>
+                                <td>55.56</td>
+                                <td>77.78</td>
+                            </tr>
+                            <tr>
+                                <td class="model-name">DeepSeek-V3</td>
+                                <td>55.56</td>
+                                <td>33.33</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>52.17</td>
+                                <td>78.26</td>
+                                <td>28.57</td>
+                                <td>35.71</td>
+                                <td>50.00</td>
+                                <td>0.00</td>
+                                <td>63.64</td>
+                                <td>77.27</td>
+                                <td>10.00</td>
+                                <td>10.00</td>
+                                <td>0.00</td>
+                                <td>50.00</td>
+                                <td>57.14</td>
+                                <td>57.14</td>
+                                <td>12.90</td>
+                                <td>9.68</td>
+                                <td>0.00</td>
+                                <td>28.57</td>
+                                <td>30.43</td>
+                                <td>52.17</td>
+                                <td>0.00</td>
+                                <td>16.67</td>
+                                <td>27.78</td>
+                                <td>22.22</td>
+                                <td>72.73</td>
+                                <td>72.73</td>
+                                <td>33.33</td>
+                                <td>28.57</td>
+                                <td>62.50</td>
+                                <td>62.50</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>100.00</td>
+                                <td>91.67</td>
+                                <td>77.78</td>
+                                <td>77.78</td>
+                            </tr>
+                    </table>
+                </div>
             </div>
 
         </div>
@@ -1711,9 +2225,6 @@ python tests/benchmark/test_benchmark_financial_analysis.py</code></pre>
     </div>
 
     <script src="tasks-data.js"></script>
-
-
-
     <script src="script.js"></script>
 </body>
 
