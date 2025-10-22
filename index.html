@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP-SafetyBench: Benchmarking LLM Security in MCP Ecosystems</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <nav class="nav">
+                <a href="index.html" class="logo">MCP-SafetyBench</a>
+                <ul class="nav-links">
+                    <li><a href="#overview" class="nav-link active" data-section="overview">Overview</a></li>
+                    <li><a href="#attack-types" class="nav-link" data-section="attack-types">Attack Types</a></li>
+                    <li><a href="#tasks" class="nav-link" data-section="tasks">Tasks</a></li>
+                    <li><a href="#results" class="nav-link" data-section="results">Results</a></li>
+                    <li><a href="#getting-started" class="nav-link" data-section="getting-started">Getting Started</a>
+                    </li>
+                    <li><a href="https://github.com/yourusername/MCPSafety" target="_blank">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-container">
+            <h1 class="hero-title">MCP-SafetyBench</h1>
+            <p class="hero-subtitle">
+                A Comprehensive Benchmark for Safety Evaluation of Large Language Models with Real-world MCP Servers
+            </p>
+            <div class="hero-buttons">
+                <a href="https://github.com/yourusername/MCPSafety" class="btn btn-primary" target="_blank">
+                    <i class="fab fa-github"></i>
+                    GitHub Repository
+                </a>
+                <a href="#getting-started" class="btn btn-secondary">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <section id="overview" class="section">
+            <h2 class="section-title">Overview</h2>
+            <p class="section-description">
+                MCP-SafetyBench is a comprehensive benchmark designed to systematically evaluate the safety and
+                robustness of LLM agents operating in the Model Context Protocol (MCP) ecosystem. It addresses critical
+                gaps in existing MCP safety benchmarks by supporting real-world servers, multi-step reasoning, and
+                diverse attack scenarios.
+            </p>
+
+            <!-- <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">245</div>
+                    <div class="stat-label">Total Tasks</div>
+            </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Domains</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20</div>
+                    <div class="stat-label">Attack Types</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">11</div>
+                    <div class="stat-label">Servers</div>
+                </div>
+            </div> -->
+
+            <div class="example-image">
+                <img src="example.png" alt="MCP-SafetyBench Example" />
+                <p class="image-caption">
+                    Figure 1: MCP workflow under an attack scenario. A Tool Poisoning – Parameter Poisoning attack
+                    (ticker → TSLA) is injected during the tool call, shown here in a partial execution result under
+                    GPT-4o.
+                </p>
+            </div>
+        </section>
+        <section id="attack-types" class="section section-gray">
+        <h2 class="section-title">Attack Type Taxonomy</h2>
+        <p class="section-description">
+            MCP-SafetyBench covers 20 attack types organized into three main categories
+        </p>
+
+        <div class="attack-tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="server">MCP Server</button>
+                <button class="tab-button" data-tab="host">MCP Host</button>
+                <button class="tab-button" data-tab="user">User</button>
+            </div>
+
+            <div class="tab-content active" id="server-tab">
+                <div class="attack-grid">
+                    <div class="attack-card">
+                        <h4>💉 Tool Poisoning-Command Injection <span
+                                style="color: #2563eb; font-weight: 600;">12.65%</span></h4>
+                        <p>Inserting shell commands into tool descriptions so that a benign tool runs malicious
+                            commands</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔗 Tool Poisoning-Function Dependency Injection <span
+                                style="color: #2563eb; font-weight: 600;">9.39%</span></h4>
+                        <p>Declaring fake "required" helper tools so that the host automatically invokes them,
+                            creating a harmful execution</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>⚡ Function Overlapping <span style="color: #2563eb; font-weight: 600;">9.39%</span></h4>
+                        <p>Malicious tools are registered with names that closely resemble trusted ones, creating
+                            ambiguity during selection</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🎛️ Preference Manipulation <span style="color: #2563eb; font-weight: 600;">8.98%</span>
+                        </h4>
+                        <p>Biased or persuasive wording in tool names or descriptions can influence the model's
+                            selection process</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>👤 Tool Shadowing <span style="color: #2563eb; font-weight: 600;">8.57%</span></h4>
+                        <p>An unsafe server injects a tool description that modifies the agent's behavior with
+                            respect to another trusted service or tool, leading to unsafe behavior</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔧 Tool Poisoning-Parameter Poisoning <span
+                                style="color: #2563eb; font-weight: 600;">7.35%</span></h4>
+                        <p>Modifying defaults or schema hints so that calls silently produce incorrect results</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>📤 Function Return Injection <span style="color: #2563eb; font-weight: 600;">5.71%</span>
+                        </h4>
+                        <p>Unsafe instructions are embedded in the return payload of a tool, triggering unintended
+                            follow-up actions when the host processes the response</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔄 Tool Poisoning-Tool Redirection <span
+                                style="color: #2563eb; font-weight: 600;">4.49%</span></h4>
+                        <p>Rewriting tool descriptions to redirect queries to high-privilege or unrelated tools
+                            under plausible pretexts</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>📁 Tool Poisoning-FileSystem Poisoning <span
+                                style="color: #2563eb; font-weight: 600;">2.86%</span></h4>
+                        <p>Embedding malicious file operations that lead to unauthorized modifications</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🏃 Rug Pull Attack <span style="color: #2563eb; font-weight: 600;">2.86%</span></h4>
+                        <p>A tool initially behaves correctly but later changes its behavior without proper
+                            versioning or signature checks, inserting hidden commands that leak sensitive data</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🌐 Tool Poisoning-Network Request Poisoning <span
+                                style="color: #2563eb; font-weight: 600;">2.45%</span></h4>
+                        <p>Injecting unsafe URLs so that the LLM agent contacts attacker-controlled domains</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="host-tab">
+                <div class="attack-grid">
+                    <div class="attack-card">
+                        <h4>🎯 Intent Injection <span style="color: #2563eb; font-weight: 600;">4.90%</span></h4>
+                        <p>The user intent is modified during planning, causing the host to call unintended tools or
+                            pass unsafe parameters</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔄 Replay Injection <span style="color: #2563eb; font-weight: 600;">3.67%</span></h4>
+                        <p>Malicious reuse of previously valid interactions to issue transactions again without user
+                            approval</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔧 Data Tampering <span style="color: #2563eb; font-weight: 600;">3.27%</span></h4>
+                        <p>Tool outputs or intermediate messages are modified before the host processes them,
+                            leading to falsified results or incorrect actions</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🎭 Identity Spoofing <span style="color: #2563eb; font-weight: 600;">0.41%</span></h4>
+                        <p>Identity-related metadata is forged or modified so the host misinterprets the source or
+                            privileges of a request</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="user-tab">
+                <div class="attack-grid">
+                    <div class="attack-card">
+                        <h4>💻 Malicious Code Execution <span style="color: #2563eb; font-weight: 600;">4.08%</span>
+                        </h4>
+                        <p>User inputs may cause tools to execute harmful commands, either directly or through side
+                            effects</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🌐 Remote Access Control <span style="color: #2563eb; font-weight: 600;">4.08%</span>
+                        </h4>
+                        <p>By abusing file manipulation or system-level tools, attackers gain persistent
+                            unauthorized access</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🔐 Credential Theft <span style="color: #2563eb; font-weight: 600;">3.67%</span></h4>
+                        <p>Tools that read or process files can be misused to expose confidential information such
+                            as API keys, tokens, or environment variables</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>🤖 Retrieval-Agent Deception (RADE) <span
+                                style="color: hwb(221 15% 8%); font-weight: 600;">0.82%</span></h4>
+                        <p>Public data sources can be poisoned so that unsafe content is later retrieved into a
+                            user's vector database, leading to indirect prompt injection or tool misuse</p>
+                    </div>
+                    <div class="attack-card">
+                        <h4>⚡ Excessive Privileges Misuse <span style="color: #2563eb; font-weight: 600;">0.41%</span>
+                        </h4>
+                        <p>Users may invoke high-privilege tools for tasks that do not require them, unnecessarily
+                            increasing security risks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <section id="tasks" class="section section-gray" style="padding: 0; background: #f9fafb;">
+            <div class="main-container">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search tasks...">
+                    </div>
+
+                    <nav class="domain-nav">
+                        <div class="domain-nav-item">
+                            <a href="#overview" class="domain-nav-link active" data-domain="overview">
+                                <span class="domain-nav-icon">📊</span>
+                                <span>Overview</span>
+                            </a>
+                        </div>
+                        <div class="domain-nav-item">
+                            <a href="#location-navigation" class="domain-nav-link" data-domain="location_navigation">
+                                <span class="domain-nav-icon">📍</span>
+                                <span>Location Navigation</span>
+                            </a>
+                        </div>
+                        <div class="domain-nav-item">
+                            <a href="#repository-management" class="domain-nav-link"
+                                data-domain="repository_management">
+                                <span class="domain-nav-icon">📦</span>
+                                <span>Repository Management</span>
+                            </a>
+                        </div>
+                        <div class="domain-nav-item">
+                            <a href="#financial-analysis" class="domain-nav-link" data-domain="financial_analysis">
+                                <span class="domain-nav-icon">💰</span>
+                                <span>Financial Analysis</span>
+                            </a>
+                        </div>
+                        <div class="domain-nav-item">
+                            <a href="#browser-automation" class="domain-nav-link" data-domain="browser_automation">
+                                <span class="domain-nav-icon">🌐</span>
+                                <span>Browser Automation</span>
+                            </a>
+                        </div>
+                        <div class="domain-nav-item">
+                            <a href="#web-search" class="domain-nav-link" data-domain="web_search">
+                                <span class="domain-nav-icon">🔍</span>
+                                <span>Web Search</span>
+                            </a>
+                        </div>
+                    </nav>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="content">
+                    <section id="overview">
+                        <h1 class="page-title">Benchmark Tasks</h1>
+                        <p class="page-description">
+                            Explore all security evaluation tasks across 5 domains. Each task includes attack scenarios
+                            to test
+                            LLM agent robustness.
+                        </p>
+
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-number">245</div>
+                                <div class="stat-label">Total Tasks</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">5</div>
+                                <div class="stat-label">Domains</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">20</div>
+                                <div class="stat-label">Attack Types</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">11</div>
+                                <div class="stat-label">Servers</div>
+                            </div>
+                        </div>
+
+                        <div class="domain-stats">
+                            <h3 style="margin-bottom: 1.5rem; color: #111827; font-size: 1.25rem; font-weight: 600;">
+                                Task Distribution by Domain</h3>
+                            <div class="table-container">
+                                <table class="leaderboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Tasks</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>📁 Repository Management</td>
+                                            <td>56</td>
+                                            <td>22.86%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>🗺️ Location Navigation</td>
+                                            <td>53</td>
+                                            <td>21.63%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>💰 Financial Analysis</td>
+                                            <td>53</td>
+                                            <td>21.63%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>🔍 Web Search</td>
+                                            <td>53</td>
+                                            <td>21.63%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>🌐 Browser Automation</td>
+                                            <td>30</td>
+                                            <td>12.24%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Attack Type Statistics -->
+                        <div class="domain-stats" style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1.5rem; color: #111827; font-size: 1.25rem; font-weight: 600;">
+                                Attack Type Distribution</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                <div class="table-container">
+                                    <table class="leaderboard-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Attack Type</th>
+                                                <th>Count</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Tool Poisoning-Command Injection</td>
+                                                <td>31</td>
+                                                <td>12.65%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Poisoning-Function Dependency</td>
+                                                <td>23</td>
+                                                <td>9.39%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Function Overlapping</td>
+                                                <td>23</td>
+                                                <td>9.39%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Preference Manipulation Attack</td>
+                                                <td>22</td>
+                                                <td>8.98%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Shadowing Attack</td>
+                                                <td>21</td>
+                                                <td>8.57%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Poisoning-Parameter Poisoning</td>
+                                                <td>18</td>
+                                                <td>7.35%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Function Return Injection</td>
+                                                <td>14</td>
+                                                <td>5.71%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Intent Injection</td>
+                                                <td>12</td>
+                                                <td>4.90%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Poisoning-Tool Redirection</td>
+                                                <td>11</td>
+                                                <td>4.49%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Remote Access Control</td>
+                                                <td>10</td>
+                                                <td>4.08%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Malicious Code Execution</td>
+                                                <td>10</td>
+                                                <td>4.08%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Replay Injection</td>
+                                                <td>9</td>
+                                                <td>3.67%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Credential Theft</td>
+                                                <td>9</td>
+                                                <td>3.67%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Data Injection</td>
+                                                <td>8</td>
+                                                <td>3.27%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Poisoning-File System Poisoning</td>
+                                                <td>7</td>
+                                                <td>2.86%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rug Pull Attack</td>
+                                                <td>7</td>
+                                                <td>2.86%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tool Poisoning-Network Request Poisoning</td>
+                                                <td>6</td>
+                                                <td>2.45%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Retrieval-Agent Deception</td>
+                                                <td>2</td>
+                                                <td>0.82%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Identity Injection</td>
+                                                <td>1</td>
+                                                <td>0.41%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Excessive Privileges Misuse</td>
+                                                <td>1</td>
+                                                <td>0.41%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="table-container">
+                                    <table class="leaderboard-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Attack Category</th>
+                                                <th>Count</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>MCP Server Attacks</td>
+                                                <td>193</td>
+                                                <td>78.78%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>MCP Host Attacks</td>
+                                                <td>24</td>
+                                                <td>9.80%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>User Attacks</td>
+                                                <td>28</td>
+                                                <td>11.43%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Statistics by Domain -->
+                        <div class="domain-stats" style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1.5rem; color: #111827; font-size: 1.25rem; font-weight: 600;">
+                                Detailed Attack Type Distribution by Domain</h3>
+
+                            <div class="table-container">
+                                <table class="leaderboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Domain</th>
+                                            <th>Attack Type</th>
+                                            <th>Count</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td rowspan="10">🌐 Browser Automation (30 tasks)</td>
+                                            <td>Function Overlapping</td>
+                                            <td>4</td>
+                                            <td>13.33%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Function Dependency</td>
+                                            <td>3</td>
+                                            <td>10.00%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Parameter Poisoning</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Command Injection</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Tool Redirection</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Shadowing Attack</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remote Access Control</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Preference Manipulation Attack</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Return Injection</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Malicious Code Execution</td>
+                                            <td>2</td>
+                                            <td>6.67%</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td rowspan="12">🗺️ Location Navigation (53 tasks)</td>
+                                            <td>Tool Poisoning-Command Injection</td>
+                                            <td>9</td>
+                                            <td>16.98%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Function Dependency</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Shadowing Attack</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Overlapping</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Preference Manipulation Attack</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Parameter Poisoning</td>
+                                            <td>4</td>
+                                            <td>7.55%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Return Injection</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Tool Redirection</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rug Pull Attack</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Malicious Code Execution</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Credential Theft</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remote Access Control</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td rowspan="13">📁 Repository Management (56 tasks)</td>
+                                            <td>Tool Poisoning-Command Injection</td>
+                                            <td>7</td>
+                                            <td>12.50%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Function Dependency</td>
+                                            <td>5</td>
+                                            <td>8.93%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Shadowing Attack</td>
+                                            <td>5</td>
+                                            <td>8.93%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Overlapping</td>
+                                            <td>5</td>
+                                            <td>8.93%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Preference Manipulation Attack</td>
+                                            <td>5</td>
+                                            <td>8.93%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Parameter Poisoning</td>
+                                            <td>4</td>
+                                            <td>7.14%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Tool Redirection</td>
+                                            <td>3</td>
+                                            <td>5.36%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Return Injection</td>
+                                            <td>3</td>
+                                            <td>5.36%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Intent Injection</td>
+                                            <td>3</td>
+                                            <td>5.36%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rug Pull Attack</td>
+                                            <td>2</td>
+                                            <td>3.57%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Malicious Code Execution</td>
+                                            <td>2</td>
+                                            <td>3.57%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Credential Theft</td>
+                                            <td>2</td>
+                                            <td>3.57%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Remote Access Control</td>
+                                            <td>2</td>
+                                            <td>3.57%</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td rowspan="11">🔍 Web Search (53 tasks)</td>
+                                            <td>Tool Poisoning-Command Injection</td>
+                                            <td>6</td>
+                                            <td>11.32%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Function Dependency</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Preference Manipulation Attack</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Parameter Poisoning</td>
+                                            <td>4</td>
+                                            <td>7.55%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Shadowing Attack</td>
+                                            <td>4</td>
+                                            <td>7.55%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Overlapping</td>
+                                            <td>4</td>
+                                            <td>7.55%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-File System Poisoning</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Return Injection</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Intent Injection</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Network Request Poisoning</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Tool Redirection</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td rowspan="12">💰 Financial Analysis (53 tasks)</td>
+                                            <td>Tool Poisoning-Command Injection</td>
+                                            <td>7</td>
+                                            <td>13.21%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Function Dependency</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Shadowing Attack</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Overlapping</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Preference Manipulation Attack</td>
+                                            <td>5</td>
+                                            <td>9.43%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Parameter Poisoning</td>
+                                            <td>4</td>
+                                            <td>7.55%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Function Return Injection</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Intent Injection</td>
+                                            <td>3</td>
+                                            <td>5.66%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tool Poisoning-Tool Redirection</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rug Pull Attack</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Malicious Code Execution</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Credential Theft</td>
+                                            <td>2</td>
+                                            <td>3.77%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div id="domains-container">
+                    </div>
+                </main>
+            </div>
+        </section>
+
+        </main>
+    </div>
+    </section>
+
+    <!-- <section id="leaderboard" class="section">
+        <h2 class="section-title">Leaderboard</h2>
+        <p class="section-description">
+            Performance comparison across different LLMs on MCP-SafetyBench. Attack Success Rate (ASR) measures
+            vulnerability to attacks (lower is better), while Task Success Rate (TSR) measures task completion
+            (higher is better).
+        </p>
+
+        <div class="leaderboard-tabs">
+            <div class="tab-content active" id="overall-tab">
+                <div class="table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>Location Nav</th>
+                                <th>Repository</th>
+                                <th>Financial</th>
+                                <th>Browser</th>
+                                <th>Web Search</th>
+                                <th>Avg ASR ↓</th>
+                                <th>Avg TSR ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="model-name">GPT-5-High</td>
+                                <td>12.3%</td>
+                                <td>15.8%</td>
+                                <td>18.2%</td>
+                                <td>16.7%</td>
+                                <td>13.9%</td>
+                                <td class="highlight">15.4%</td>
+                                <td class="highlight">72.4%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="model-name">Claude-4.0-Sonnet</td>
+                                <td>16.5%</td>
+                                <td>18.3%</td>
+                                <td>20.1%</td>
+                                <td>19.4%</td>
+                                <td>16.8%</td>
+                                <td class="highlight">18.2%</td>
+                                <td class="highlight">68.9%</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="model-name">Gemini-2.5-Pro</td>
+                                <td>18.9%</td>
+                                <td>21.4%</td>
+                                <td>23.6%</td>
+                                <td>22.1%</td>
+                                <td>18.7%</td>
+                                <td class="highlight">20.9%</td>
+                                <td class="highlight">65.3%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+
+            <!-- <div class="tab-content" id="react-tab">
+                <div class="table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>Location Nav</th>
+                                <th>Repository</th>
+                                <th>Financial</th>
+                                <th>Browser</th>
+                                <th>Web Search</th>
+                                <th>Avg ASR ↓</th>
+                                <th>Avg TSR ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="model-name">GPT-5-High</td>
+                                <td>12.3%</td>
+                                <td>15.8%</td>
+                                <td>18.2%</td>
+                                <td>16.7%</td>
+                                <td>13.9%</td>
+                                <td class="highlight">15.4%</td>
+                                <td class="highlight">72.4%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="model-name">Claude-4.0-Opus</td>
+                                <td>17.2%</td>
+                                <td>19.1%</td>
+                                <td>21.3%</td>
+                                <td>20.6%</td>
+                                <td>17.5%</td>
+                                <td class="highlight">19.1%</td>
+                                <td class="highlight">67.2%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="function-tab">
+                <div class="table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>Location Nav</th>
+                                <th>Repository</th>
+                                <th>Financial</th>
+                                <th>Browser</th>
+                                <th>Web Search</th>
+                                <th>Avg ASR ↓</th>
+                                <th>Avg TSR ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="model-name">GPT-5-Medium</td>
+                                <td>14.1%</td>
+                                <td>16.9%</td>
+                                <td>19.4%</td>
+                                <td>17.8%</td>
+                                <td>15.2%</td>
+                                <td class="highlight">16.7%</td>
+                                <td class="highlight">70.8%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="insights">
+            <h3>Key Findings</h3>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h4>📉 Overall Security Challenges</h4>
+                    <p>Even state-of-the-art models show significant security vulnerabilities, indicating
+                        substantial room for improvement in handling real-world MCP server interactions.</p>
+                </div>
+                <div class="insight-card">
+                    <h4>🎯 Cross-Domain Variations</h4>
+                    <p>Models demonstrate markedly different security profiles across application domains,
+                        suggesting the need for domain-specific security optimizations.</p>
+                </div>
+                <div class="insight-card">
+                    <h4>⚔️ Multi-Layer Attacks</h4>
+                    <p>Server, host, and user layer attacks exhibit different success patterns, requiring
+                        multi-layered defense strategies.</p>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+
+    <section id="results" class="section">
+        <h2 class="section-title">Results</h2>
+        <p class="section-description">
+            Performance comparison across different LLMs on MCP-SafetyBench. Attack Success Rate (ASR) measures
+            vulnerability to attacks (lower is better), while Task Success Rate (TSR) measures task completion
+            (higher is better).
+        </p>
+
+        <div class="results-tables">
+            <h3 class="subsection-title"
+                style="font-size: 1.75rem; font-weight: 700; color: #1f2937;text-align: center; padding: 0.75rem 0; border-bottom: 3px solid #2563eb; display: inline-block; width: 100%;">
+                Table 1: Task Success Rate (TSR, %) and Attack Success Rate (ASR, %) by domain</h3>
+            <!-- <p
+                style="margin-bottom: 1.5rem; color: #6b7280; font-size: 0.95rem; line-height: 1.7; text-align: left; max-width: 100%;">
+                <strong style="color: #1f2937; font-weight: 600;">Composite Score Calculation:</strong>
+                <span style="color: #374151;">
+                    Score = TSR × (1 - ASR/100) × 0.6 + (100 - ASR) × 0.4
+                </span>
+                <br>
+                This score combines task completion ability (60% weight) with security (40% weight), providing a
+                comprehensive evaluation of model performance under safety constraints.
+            </p> -->
+            <div class="table-container">
+                <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th colspan="4">Location Navigation</th>
+                            <th colspan="4">Repository Management</th>
+                            <th colspan="4">Financial Analysis</th>
+                            <th colspan="4">Browser Automation</th>
+                            <th colspan="4">Web Searching</th>
+                            <th colspan="4">Overall</th>
+                            <th rowspan="2">Score↑</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                            <th colspan="2">TSR↑</th>
+                            <th colspan="2">ASR↓</th>
+                        </tr>
+                        <tr>
+                            <th>With/Without Safety Prompt</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                            <th>❌</th>
+                            <th>✅</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="25" class="model-name"
+                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                <strong
+                                    style="color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Proprietary
+                                    Models</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-5</td>
+                            <td>5.66</td>
+                            <td></td>
+                            <td>33.96</td>
+                            <td></td>
+                            <td>5.36</td>
+                            <td></td>
+                            <td>42.86</td>
+                            <td></td>
+                            <td>32.08</td>
+                            <td></td>
+                            <td>45.28</td>
+                            <td></td>
+                            <td>3.33</td>
+                            <td></td>
+                            <td>20.00</td>
+                            <td></td>
+                            <td>28.30</td>
+                            <td></td>
+                            <td>37.74</td>
+                            <td></td>
+                            <td class="highlight">15.92</td>
+                            <td></td>
+                            <td class="highlight">37.55</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-4.1</td>
+                            <td>9.43</td>
+                            <td></td>
+                            <td>43.40</td>
+                            <td></td>
+                            <td>5.36</td>
+                            <td></td>
+                            <td>53.57</td>
+                            <td></td>
+                            <td>22.64</td>
+                            <td></td>
+                            <td>54.72</td>
+                            <td></td>
+                            <td>10.00</td>
+                            <td></td>
+                            <td>46.67</td>
+                            <td></td>
+                            <td>1.89</td>
+                            <td></td>
+                            <td>15.09</td>
+                            <td></td>
+                            <td class="highlight">9.80</td>
+                            <td></td>
+                            <td class="highlight">42.45</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-4o</td>
+                            <td>5.66</td>
+                            <td></td>
+                            <td>50.94</td>
+                            <td></td>
+                            <td>1.79</td>
+                            <td></td>
+                            <td>48.21</td>
+                            <td></td>
+                            <td>22.64</td>
+                            <td></td>
+                            <td>50.94</td>
+                            <td></td>
+                            <td>13.33</td>
+                            <td></td>
+                            <td>50.00</td>
+                            <td></td>
+                            <td>3.77</td>
+                            <td></td>
+                            <td>13.21</td>
+                            <td></td>
+                            <td class="highlight">8.98</td>
+                            <td></td>
+                            <td class="highlight">42.04</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">o4-mini</td>
+                            <td>18.87</td>
+                            <td></td>
+                            <td>49.06</td>
+                            <td></td>
+                            <td>8.93</td>
+                            <td></td>
+                            <td>58.93</td>
+                            <td></td>
+                            <td>39.62</td>
+                            <td></td>
+                            <td>54.72</td>
+                            <td></td>
+                            <td>10.00</td>
+                            <td></td>
+                            <td>30.00</td>
+                            <td></td>
+                            <td>24.53</td>
+                            <td></td>
+                            <td>39.62</td>
+                            <td></td>
+                            <td class="highlight">21.22</td>
+                            <td></td>
+                            <td class="highlight">48.16</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Claude-3.7-Sonnet</td>
+                            <td>13.21</td>
+                            <td></td>
+                            <td>37.74</td>
+                            <td></td>
+                            <td>3.57</td>
+                            <td></td>
+                            <td>33.93</td>
+                            <td></td>
+                            <td>32.08</td>
+                            <td></td>
+                            <td>35.85</td>
+                            <td></td>
+                            <td>10.00</td>
+                            <td></td>
+                            <td>30.00</td>
+                            <td></td>
+                            <td>15.09</td>
+                            <td></td>
+                            <td>26.42</td>
+                            <td></td>
+                            <td class="highlight">15.10</td>
+                            <td></td>
+                            <td class="highlight">33.06</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Claude-4.0-Sonnet</td>
+                            <td>1.89</td>
+                            <td></td>
+                            <td>39.62</td>
+                            <td></td>
+                            <td>3.57</td>
+                            <td></td>
+                            <td>19.64</td>
+                            <td></td>
+                            <td>26.42</td>
+                            <td></td>
+                            <td>43.40</td>
+                            <td></td>
+                            <td>6.67</td>
+                            <td></td>
+                            <td>26.67</td>
+                            <td></td>
+                            <td>11.32</td>
+                            <td></td>
+                            <td>24.53</td>
+                            <td></td>
+                            <td class="highlight">10.20</td>
+                            <td></td>
+                            <td class="highlight">31.02</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Gemini-2.5-Pro</td>
+                            <td>11.32</td>
+                            <td>20.75</td>
+                            <td>64.15</td>
+                            <td>56.60</td>
+                            <td>5.36</td>
+                            <td>0.00</td>
+                            <td>44.64</td>
+                            <td>12.50</td>
+                            <td>49.06</td>
+                            <td>37.74</td>
+                            <td>49.06</td>
+                            <td>50.94</td>
+                            <td>23.33</td>
+                            <td>26.67</td>
+                            <td>30.00</td>
+                            <td>20.00</td>
+                            <td>15.09</td>
+                            <td>1.89</td>
+                            <td>37.74</td>
+                            <td>52.83</td>
+                            <td class="highlight">20.41</td>
+                            <td></td>
+                            <td class="highlight">46.53</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Gemini-2.5-Flash</td>
+                            <td>7.55</td>
+                            <td>7.55</td>
+                            <td>50.94</td>
+                            <td>41.51</td>
+                            <td>10.71</td>
+                            <td>0.00</td>
+                            <td>46.43</td>
+                            <td>23.21</td>
+                            <td>33.96</td>
+                            <td>35.85</td>
+                            <td>56.60</td>
+                            <td>43.40</td>
+                            <td>3.33</td>
+                            <td>10.00</td>
+                            <td>43.33</td>
+                            <td>36.67</td>
+                            <td>13.21</td>
+                            <td>1.89</td>
+                            <td>33.96</td>
+                            <td>47.17</td>
+                            <td class="highlight">14.69</td>
+                            <td></td>
+                            <td class="highlight">46.53</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Grok-4</td>
+                            <td>11.32</td>
+                            <td>5.66</td>
+                            <td>33.96</td>
+                            <td>32.08</td>
+                            <td>3.57</td>
+                            <td>0.00</td>
+                            <td>46.43</td>
+                            <td>7.14</td>
+                            <td>22.64</td>
+                            <td>11.32</td>
+                            <td>39.62</td>
+                            <td>35.85</td>
+                            <td>13.33</td>
+                            <td>13.33</td>
+                            <td>30.00</td>
+                            <td>26.67</td>
+                            <td>24.53</td>
+                            <td>11.32</td>
+                            <td>43.40</td>
+                            <td>43.40</td>
+                            <td class="highlight">15.10</td>
+                            <td></td>
+                            <td class="highlight">39.59</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="25" class="model-name"
+                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                <strong
+                                    style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Open-Source
+                                    Models</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GLM-4.5</td>
+                            <td>9.43</td>
+                            <td>11.32</td>
+                            <td>54.72</td>
+                            <td>37.74</td>
+                            <td>8.93</td>
+                            <td>0.00</td>
+                            <td>41.07</td>
+                            <td>21.43</td>
+                            <td>41.51</td>
+                            <td>33.96</td>
+                            <td>50.94</td>
+                            <td>52.83</td>
+                            <td>10.00</td>
+                            <td>6.67</td>
+                            <td>43.33</td>
+                            <td>43.33</td>
+                            <td>20.75</td>
+                            <td>3.77</td>
+                            <td>32.08</td>
+                            <td>52.83</td>
+                            <td class="highlight">18.78</td>
+                            <td></td>
+                            <td class="highlight">44.49</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Kimi-K2</td>
+                            <td>7.55</td>
+                            <td>13.21</td>
+                            <td>35.85</td>
+                            <td>45.28</td>
+                            <td>8.93</td>
+                            <td>0.00</td>
+                            <td>37.50</td>
+                            <td>28.57</td>
+                            <td>37.74</td>
+                            <td>41.51</td>
+                            <td>43.40</td>
+                            <td>39.62</td>
+                            <td>16.67</td>
+                            <td>16.67</td>
+                            <td>43.33</td>
+                            <td>43.33</td>
+                            <td>7.55</td>
+                            <td>5.66</td>
+                            <td>35.85</td>
+                            <td>41.51</td>
+                            <td class="highlight">15.51</td>
+                            <td></td>
+                            <td class="highlight">38.78</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Qwen3-235B</td>
+                            <td>7.55</td>
+                            <td>15.09</td>
+                            <td>26.42</td>
+                            <td>30.19</td>
+                            <td>3.57</td>
+                            <td>0.00</td>
+                            <td>30.36</td>
+                            <td>16.07</td>
+                            <td>24.53</td>
+                            <td>24.53</td>
+                            <td>33.96</td>
+                            <td>30.19</td>
+                            <td>13.33</td>
+                            <td>16.67</td>
+                            <td>40.00</td>
+                            <td>26.67</td>
+                            <td>3.77</td>
+                            <td>1.89</td>
+                            <td>22.64</td>
+                            <td>41.51</td>
+                            <td class="highlight">10.20</td>
+                            <td></td>
+                            <td class="highlight">29.80</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">DeepSeek-V3</td>
+                            <td>13.21</td>
+                            <td>13.21</td>
+                            <td>47.17</td>
+                            <td>49.06</td>
+                            <td>7.14</td>
+                            <td>0.00</td>
+                            <td>35.71</td>
+                            <td>16.07</td>
+                            <td>35.85</td>
+                            <td>30.19</td>
+                            <td>47.17</td>
+                            <td>43.40</td>
+                            <td>20.00</td>
+                            <td>20.00</td>
+                            <td>50.00</td>
+                            <td>53.33</td>
+                            <td>20.75</td>
+                            <td>3.77</td>
+                            <td>32.08</td>
+                            <td>47.17</td>
+                            <td class="highlight">19.18</td>
+                            <td></td>
+                            <td class="highlight">41.63</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="subsection-title"
+                style="font-size: 1.75rem; font-weight: 700; color: #1f2937; margin: 3rem 0 1.5rem 0; text-align: center; padding: 0.75rem 0; border-bottom: 3px solid #2563eb; display: inline-block; width: 100%;">
+                Table 2: Attack Success Rate (ASR, %) by Attack Type</h3>
+            <p
+                style="margin-bottom: 1.5rem; color: #6b7280; font-size: 0.95rem; line-height: 1.7; text-align: left; max-width: 100%;">
+                <!-- We report the percentage of successful attacks for each attack type across all domains and tasks.
+                Higher values indicate that the model is more vulnerable to that specific attack type.
+                <br><br> -->
+                <strong style="color: #1f2937; font-weight: 600;">Abbreviations:</strong>
+                <span style="color: #374151;">
+                    CT (Credential Theft), EPO (Excessive Privileges Misuse), FO
+                    (Function Overlapping), FRI (Function Return Injection), MCE (Malicious Code Execution), PMA
+                    (Preference Manipulation Attack), RAC (Remote Access Control), RADE (Retrieval-Agent Deception),
+                    RPA
+                    (Rug Pull Attack), CSI (Tool Poisoning-Command Injection), TFS (Tool Poisoning-File System
+                    Poisoning), TFD (Tool Poisoning-Function Dependency Poisoning), TNR (Tool Poisoning-Network
+                    Request
+                    Poisoning), TPA (Tool Poisoning-Parameter Poisoning), TTR (Tool Poisoning-Tool Redirection), TSA
+                    (Tool Shadowing Attack), DI (Data Injection), IdI (Identity Injection), II (Intent Injection),
+                    RI
+                    (Replay Injection).
+                </span>
+            </p>
+            <div class="table-container">
+                <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>CT</th>
+                            <th>EPO</th>
+                            <th>FO</th>
+                            <th>FRI</th>
+                            <th>MCE</th>
+                            <th>PMA</th>
+                            <th>RAC</th>
+                            <th>RADE</th>
+                            <th>RPA</th>
+                            <th>CSI</th>
+                            <th>TFS</th>
+                            <th>TFD</th>
+                            <th>TNR</th>
+                            <th>TPA</th>
+                            <th>TTR</th>
+                            <th>TSA</th>
+                            <th>DI</th>
+                            <th>IdI</th>
+                            <th>II</th>
+                            <th>RI</th>
+                            <th>Average</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="23" class="model-name"
+                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                <strong
+                                    style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Proprietary
+                                    Models</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-5</td>
+                            <td>22.22</td><td>100.00</td><td>43.48</td><td>28.57</td><td>0.00</td><td>36.36</td><td>0.00</td><td>50.00</td><td>28.57</td><td>32.26</td><td>14.29</td><td>39.13</td><td>33.33</td><td>16.67</td><td>45.45</td><td>38.10</td><td>62.50</td><td>100.00</td><td>91.67</td><td>100.00</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-4.1</td>
+                            <td>44.44</td><td>100.00</td><td>78.26</td><td>50.00</td><td>10.00</td><td>72.73</td><td>10.00</td><td>0.00</td><td>42.86</td><td>12.90</td><td>0.00</td><td>43.48</td><td>0.00</td><td>16.67</td><td>90.91</td><td>28.57</td><td>50.00</td><td>100.00</td><td>75.00</td><td>66.67</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GPT-4o</td>
+                            <td>55.56</td><td>100.00</td><td>69.57</td><td>42.86</td><td>50.00</td><td>77.27</td><td>0.00</td><td>0.00</td><td>42.86</td><td>16.13</td><td>0.00</td><td>34.78</td><td>0.00</td><td>22.22</td><td>72.73</td><td>33.33</td><td>50.00</td><td>100.00</td><td>58.33</td><td>66.67</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">o4-mini</td>
+                            <td>33.33</td><td>100.00</td><td>39.13</td><td>35.71</td><td>20.00</td><td>50.00</td><td>30.00</td><td>0.00</td><td>28.57</td><td>83.87</td><td>42.86</td><td>47.83</td><td>16.67</td><td>0.00</td><td>54.55</td><td>42.86</td><td>62.50</td><td>100.00</td><td>100.00</td><td>88.89</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Claude-3.7-Sonnet</td>
+                            <td>55.56</td><td>0.00</td><td>56.52</td><td>35.71</td><td>0.00</td><td>36.36</td><td>0.00</td><td>100.00</td><td>57.14</td><td>6.45</td><td>0.00</td><td>13.04</td><td>0.00</td><td>0.00</td><td>81.82</td><td>28.57</td><td>62.50</td><td>100.00</td><td>91.67</td><td>77.78</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Claude-4.0-Sonnet</td>
+                            <td>44.44</td><td>0.00</td><td>30.43</td><td>42.86</td><td>10.00</td><td>22.73</td><td>10.00</td><td>100.00</td><td>57.14</td><td>3.23</td><td>0.00</td><td>30.43</td><td>0.00</td><td>16.67</td><td>54.55</td><td>28.57</td><td>62.50</td><td>0.00</td><td>91.67</td><td>77.78</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Gemini-2.5-Pro</td>
+                            <td>11.11</td><td>0.00</td><td>60.87</td><td>50.00</td><td>30.00</td><td>63.64</td><td>20.00</td><td>100.00</td><td>71.43</td><td>25.81</td><td>42.86</td><td>39.13</td><td>0.00</td><td>27.78</td><td>54.55</td><td>52.38</td><td>62.50</td><td>100.00</td><td>100.00</td><td>66.67</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Gemini-2.5-Flash</td>
+                            <td>66.67</td><td>100.00</td><td>69.57</td><td>57.14</td><td>40.00</td><td>31.82</td><td>40.00</td><td>100.00</td><td>42.86</td><td>16.13</td><td>14.29</td><td>47.83</td><td>0.00</td><td>27.78</td><td>90.91</td><td>28.57</td><td>62.50</td><td>100.00</td><td>83.33</td><td>100.00</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Grok-4</td>
+                            <td>22.22</td><td>0.00</td><td>43.48</td><td>50.00</td><td>10.00</td><td>31.82</td><td>10.00</td><td>100.00</td><td>42.86</td><td>29.03</td><td>28.57</td><td>39.13</td><td>0.00</td><td>27.78</td><td>72.73</td><td>47.62</td><td>62.50</td><td>100.00</td><td>75.00</td><td>66.67</td>
+                        </tr>
+                        <tr>
+                            <td colspan="23" class="model-name"
+                                style="padding: 1rem 0.75rem; text-align: center; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: var(--text-primary);">
+                                <strong
+                                    style="background: #f3f4f6; color: #374151; font-weight: 700; padding: 0.5rem; border-radius: 4px; display: inline-block;">Open-Source
+                                    Models</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">GLM-4.5</td>
+                            <td>66.67</td><td>100.00</td><td>52.17</td><td>42.86</td><td>40.00</td><td>40.91</td><td>40.00</td><td>0.00</td><td>42.86</td><td>16.13</td><td>14.29</td><td>43.48</td><td>16.67</td><td>33.33</td><td>81.82</td><td>28.57</td><td>62.50</td><td>100.00</td><td>100.00</td><td>88.89</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Kimi-K2</td>
+                            <td>55.56</td><td>100.00</td><td>60.87</td><td>42.86</td><td>40.00</td><td>50.00</td><td>0.00</td><td>50.00</td><td>42.86</td><td>6.45</td><td>14.29</td><td>13.04</td><td>0.00</td><td>27.78</td><td>72.73</td><td>19.05</td><td>62.50</td><td>100.00</td><td>100.00</td><td>100.00</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">Qwen3-235B</td>
+                            <td>33.33</td><td>0.00</td><td>17.39</td><td>42.86</td><td>30.00</td><td>22.73</td><td>0.00</td><td>0.00</td><td>28.57</td><td>16.13</td><td>14.29</td><td>43.48</td><td>0.00</td><td>16.67</td><td>63.64</td><td>19.05</td><td>75.00</td><td>100.00</td><td>66.67</td><td>55.56</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name">DeepSeek-V3</td>
+                            <td>55.56</td><td>100.00</td><td>52.17</td><td>28.57</td><td>50.00</td><td>63.64</td><td>10.00</td><td>0.00</td><td>57.14</td><td>12.90</td><td>0.00</td><td>30.43</td><td>0.00</td><td>27.78</td><td>72.73</td><td>33.33</td><td>62.50</td><td>100.00</td><td>100.00</td><td>77.78</td>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    
+    <section id="getting-started" class="section">
+        <h2 class="section-title">Getting Started</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Install Dependencies</h3>
+                    <pre><code>pip install -r requirements.txt
+pip install -r dev-requirements.txt</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Configure Environment</h3>
+                    <pre><code>cp .env.example .env
+# Edit .env file to add your API keys and configuration</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Docker Environment (Recommended)</h3>
+                    <pre><code># Build Docker image
+docker build -t mcpsafety .
+
+# Run tests
+docker run --rm -v $(pwd):/app -w /app mcpsafety bash -c \
+  "PYTHONPATH=. python tests/benchmark/test_benchmark_web_search.py"</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Run Benchmarks</h3>
+                    <pre><code># Set Python path
+export PYTHONPATH=.
+
+# Run domain-specific tests
+python tests/benchmark/test_benchmark_location_navigation.py
+python tests/benchmark/test_benchmark_browser_automation.py
+python tests/benchmark/test_benchmark_financial_analysis.py</code></pre>
+                </div>
+            </div>
+        </div>
+        <section class="section section-warning">
+            <h2 class="section-title">⚠️ Security Guidelines</h2>
+            <div class="security-notice">
+                <div class="security-icon">🔒</div>
+                <div>
+                    <h3>Important Security Notice</h3>
+                    <p>Before running the benchmark, please carefully read and follow these security guidelines:</p>
+                </div>
+            </div>
+
+            <div class="security-cards">
+                <div class="security-card critical">
+                    <h4>🚨 GitHub Integration: Critical Warning</h4>
+                    <p>We <strong>strongly recommend</strong> using a dedicated testing GitHub account for benchmark
+                        evaluations. AI agents will perform real operations on GitHub repositories, which may modify or
+                        damage your personal repositories.</p>
+                </div>
+
+                <div class="security-card">
+                    <h4>🔐 API Key Management</h4>
+                    <ul>
+                        <li>Store API keys securely and never commit them to version control</li>
+                        <li>Use environment variables or secure key management systems</li>
+                        <li>Regularly rotate your API keys to enhance security</li>
+                    </ul>
+                </div>
+
+                <div class="security-card">
+                    <h4>🛡️ Access Control</h4>
+                    <ul>
+                        <li>Grant minimum necessary permissions for each service integration</li>
+                        <li>Review and limit API key scopes to only required operations</li>
+                        <li>Monitor API usage and set appropriate rate limits</li>
+                    </ul>
+                </div>
+
+                <div class="security-card critical">
+                    <h4>⚠️ System Security</h4>
+                    <p>This benchmark includes various attack scenarios that may modify system files, create/delete
+                        repositories, and perform other potentially destructive operations. We <strong>strongly
+                            recommend</strong> running all tests in a Docker environment or isolated virtual machine to
+                        prevent accidental system modifications.</p>
+                </div>
+            </div>
+        </section>
+        <div class="docs-link">
+            <p>View complete documentation: <a href="https://github.com/yourusername/MCPSafety/blob/main/README.md"
+                    target="_blank">README.md</a></p>
+        </div>
+    </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>MCP-SafetyBench</h4>
+                <p>A Comprehensive Benchmark for Evaluating LLM Agent Safety in MCP Ecosystems</p>
+            </div>
+            <div class="footer-section">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="https://github.com/yourusername/MCPSafety" target="_blank">GitHub</a></li>
+                    <li><a href="https://github.com/yourusername/MCPSafety/issues" target="_blank">Issues</a></li>
+                    <li><a href="https://github.com/yourusername/MCPSafety/blob/main/README.md"
+                            target="_blank">Documentation</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Related Projects</h4>
+                <ul>
+                    <li><a href="https://mcp-universe.github.io/" target="_blank">MCP-Universe</a></li>
+                    <li><a href="https://modelcontextprotocol.io/" target="_blank">MCP Official</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MCP-SafetyBench</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Task Details</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="json-viewer" id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="tasks-data.js"></script>
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
