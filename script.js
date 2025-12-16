@@ -41,6 +41,24 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Sidebar toggle functionality
+  const sidebar = document.getElementById("taskSidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  
+  if (sidebar && sidebarToggle) {
+    sidebarToggle.addEventListener("click", function () {
+      sidebar.classList.toggle("hidden");
+      const icon = this.querySelector("i");
+      if (sidebar.classList.contains("hidden")) {
+        icon.classList.remove("fa-chevron-left");
+        icon.classList.add("fa-chevron-right");
+      } else {
+        icon.classList.remove("fa-chevron-right");
+        icon.classList.add("fa-chevron-left");
+      }
+    });
+  }
+
   // Smooth scroll to anchor
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
@@ -452,13 +470,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Calculate per-row averages for Table 2 (❌ without prompt, ✅ with prompt)
   function calculateTable2Averages() {
-    // Locate Table 2 as the second table under .results-tables
-    const tables = document.querySelectorAll(
-      ".results-tables .leaderboard-table"
+    // Locate Table 2 by finding the table that contains "Table 2: Attack Success Rate" heading
+    const headings = Array.from(document.querySelectorAll("h3"));
+    const table2Heading = headings.find((h) =>
+      h.textContent.includes("Table 2: Attack Success Rate")
     );
-    const table = tables[1];
+    if (!table2Heading) {
+      console.warn("Table 2 heading not found");
+      return;
+    }
+    // Find the table after the heading (may be inside a container)
+    let element = table2Heading.nextElementSibling;
+    while (element) {
+      if (element.tagName === "TABLE") {
+        break;
+      }
+      // Check if element contains a table
+      const table = element.querySelector && element.querySelector("table");
+      if (table) {
+        element = table;
+        break;
+      }
+      element = element.nextElementSibling;
+    }
+    const table = element && element.tagName === "TABLE" ? element : null;
     if (!table) {
-      console.warn("Table 2 not found");
+      console.warn("Table 2 not found after heading");
       return;
     }
 
@@ -469,7 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // First header row has grouped labels: Model | CT | EPO | ... | RI | Average
+    // First header row has grouped labels: Model | CT | EPM | ... | RI | Average
     const groupRow = headerRows[0];
     const groupHeaders = Array.from(groupRow.querySelectorAll("th"));
 
@@ -507,23 +544,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Attack type weights based on the actual task statistics (percentage shares)
     const weights = {
       CT: 3.67, // Credential Theft
-      EPO: 0.41, // Excessive Privileges Misuse
+      EPM: 0.41, // Excessive Privileges Misuse
       FO: 9.39, // Function Overlapping
       FRI: 5.71, // Function Return Injection
       MCE: 4.08, // Malicious Code Execution
-      PMA: 8.98, // Preference Manipulation Attack
+      PM: 8.98, // Preference Manipulation
       RAC: 4.08, // Remote Access Control
       RADE: 0.82, // Retrieval-Agent Deception
       RPA: 2.86, // Rug Pull Attack
-      CSI: 12.65, // Tool Poisoning-Command Injection
-      TFS: 2.86, // Tool Poisoning-File System Poisoning
-      TFD: 9.39, // Tool Poisoning-Function Dependency Poisoning
-      TNR: 2.45, // Tool Poisoning-Network Request Poisoning
-      TPA: 7.35, // Tool Poisoning-Parameter Poisoning
-      TTR: 4.49, // Tool Poisoning-Tool Redirection
-      TSA: 8.57, // Tool Shadowing Attack
-      DI: 3.27, // Data Injection
-      IdI: 0.41, // Identity Injection
+      CI: 12.65, // Tool Poisoning-Command Injection
+      FSP: 2.86, // Tool Poisoning-FileSystem Poisoning
+      FDI: 9.39, // Tool Poisoning-Function Dependency Injection
+      NRP: 2.45, // Tool Poisoning-Network Request Poisoning
+      PP: 7.35, // Tool Poisoning-Parameter Poisoning
+      TR: 4.49, // Tool Poisoning-Tool Redirection
+      TS: 8.57, // Tool Shadowing
+      DT: 3.27, // Data Tampering
+      IS: 0.41, // Identity Spoofing
       II: 4.9, // Intent Injection
       RI: 3.67, // Replay Injection
     };
@@ -989,14 +1026,15 @@ function initializeTasks() {
 
     html += `
                     <div class="domain-section" id="${config.id}">
-                        <div class="domain-header">
+                        <div class="domain-header" style="cursor: pointer;">
                             <span class="domain-icon">${config.icon}</span>
                             <h2 class="domain-title">${config.title}</h2>
                             <span class="domain-count">${
                               tasks.length
                             } tasks</span>
+                            <i class="fas fa-chevron-down domain-expand-icon" style="margin-left: 0.5rem; transition: transform 0.3s;"></i>
                         </div>
-                        <div class="tasks-grid">
+                        <div class="tasks-grid collapsed">
                             ${tasks
                               .map((task, index) =>
                                 createTaskCard(task, domainKey, index)
@@ -1011,17 +1049,24 @@ function initializeTasks() {
 
   // Stats are now static based on paper data
 
-  // Add event listeners to task cards
-  document.querySelectorAll(".task-card").forEach((card) => {
-    card.addEventListener("click", function (e) {
-      // Don't trigger if clicking the button
-      if (e.target.classList.contains("view-btn")) {
-        return;
+  // Add event listeners to domain headers for expand/collapse
+  document.querySelectorAll(".domain-header").forEach((header) => {
+    header.addEventListener("click", function () {
+      const domainSection = this.closest(".domain-section");
+      const tasksGrid = domainSection.querySelector(".tasks-grid");
+      const expandIcon = this.querySelector(".domain-expand-icon");
+      
+      if (tasksGrid.classList.contains("collapsed")) {
+        tasksGrid.classList.remove("collapsed");
+        tasksGrid.classList.add("expanded");
+        expandIcon.classList.remove("fa-chevron-down");
+        expandIcon.classList.add("fa-chevron-up");
+      } else {
+        tasksGrid.classList.remove("expanded");
+        tasksGrid.classList.add("collapsed");
+        expandIcon.classList.remove("fa-chevron-up");
+        expandIcon.classList.add("fa-chevron-down");
       }
-      const domain = this.dataset.domain;
-      const index = parseInt(this.dataset.index);
-      const task = tasksData[domain].tasks[index];
-      showTaskDetails(task);
     });
   });
 
