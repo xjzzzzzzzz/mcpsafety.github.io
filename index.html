@@ -36,6 +36,44 @@
             <p class="hero-subtitle">
                 A Comprehensive Benchmark for Safety Evaluation of Large Language Models with Real-world MCP Servers
             </p>
+            <div class="hero-authors"
+                style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                <div
+                    style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; align-items: center; font-size: 0.95rem; color: rgba(255, 255, 255, 0.9);">
+                    <div style="text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Xuanjun Zong<sup
+                                style="font-size: 0.8em;">1*</sup></div>
+                        <div style="font-size: 0.85em; opacity: 0.8;">xjzong@stu.ecnu.edu.cn</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Zhiqi Shen<sup
+                                style="font-size: 0.8em;">2*</sup></div>
+                        <div style="font-size: 0.85em; opacity: 0.8;">zhiqishen@u.nus.edu.sg</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Lei Wang<sup
+                                style="font-size: 0.8em;">3†</sup></div>
+                        <div style="font-size: 0.85em; opacity: 0.8;">lei.wang.2019@phdcs.smu.edu.sg</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Yunshi Lan<sup
+                                style="font-size: 0.8em;">1†</sup></div>
+                        <div style="font-size: 0.85em; opacity: 0.8;">yslan@dase.ecnu.edu.cn</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Chao Yang<sup
+                                style="font-size: 0.8em;">4</sup></div>
+                        <div style="font-size: 0.85em; opacity: 0.8;">yangchao@pjlab.org.cn</div>
+                    </div>
+                </div>
+                <div
+                    style="margin: 1.5rem auto; text-align: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                    <div><sup>1</sup>East China Normal University</div>
+                    <div><sup>2</sup>National University of Singapore</div>
+                    <div><sup>3</sup>Singapore Management University</div>
+                    <div><sup>4</sup>Shanghai AI Laboratory</div>
+                </div>
+            </div>
             <div class="hero-buttons">
                 <a href="https://arxiv.org/abs/XXXX.XXXXX" class="btn btn-primary" target="_blank">
                     <i class="fas fa-file-alt"></i>
@@ -60,24 +98,6 @@
                 diverse attack scenarios.
             </p>
 
-            <!-- <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-number">245</div>
-                    <div class="stat-label">Total Tasks</div>
-            </div>
-                <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Domains</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">20</div>
-                    <div class="stat-label">Attack Types</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">11</div>
-                    <div class="stat-label">Servers</div>
-                </div>
-            </div> -->
 
             <div class="example-image">
                 <img src="example.png" alt="MCP-SafetyBench Example" />
@@ -385,170 +405,6 @@
         </main>
     </div>
     </section>
-
-    <!-- <section id="leaderboard" class="section">
-        <h2 class="section-title">Leaderboard</h2>
-        <p class="section-description">
-            Performance comparison across different LLMs on MCP-SafetyBench. Attack Success Rate (ASR) measures
-            vulnerability to attacks (lower is better), while Task Success Rate (TSR) measures task completion
-            (higher is better).
-        </p>
-
-        <div class="leaderboard-tabs">
-            <div class="tab-content active" id="overall-tab">
-                <div class="table-container">
-                    <table class="leaderboard-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Model</th>
-                                <th>Location Nav</th>
-                                <th>Repository</th>
-                                <th>Financial</th>
-                                <th>Browser</th>
-                                <th>Web Search</th>
-                                <th>Avg ASR ↓</th>
-                                <th>Avg TSR ↑</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="model-name">GPT-5-High</td>
-                                <td>12.3%</td>
-                                <td>15.8%</td>
-                                <td>18.2%</td>
-                                <td>16.7%</td>
-                                <td>13.9%</td>
-                                <td class="highlight">15.4%</td>
-                                <td class="highlight">72.4%</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="model-name">Claude-4.0-Sonnet</td>
-                                <td>16.5%</td>
-                                <td>18.3%</td>
-                                <td>20.1%</td>
-                                <td>19.4%</td>
-                                <td>16.8%</td>
-                                <td class="highlight">18.2%</td>
-                                <td class="highlight">68.9%</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td class="model-name">Gemini-2.5-Pro</td>
-                                <td>18.9%</td>
-                                <td>21.4%</td>
-                                <td>23.6%</td>
-                                <td>22.1%</td>
-                                <td>18.7%</td>
-                                <td class="highlight">20.9%</td>
-                                <td class="highlight">65.3%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div> -->
-
-    <!-- <div class="tab-content" id="react-tab">
-                <div class="table-container">
-                    <table class="leaderboard-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Model</th>
-                                <th>Location Nav</th>
-                                <th>Repository</th>
-                                <th>Financial</th>
-                                <th>Browser</th>
-                                <th>Web Search</th>
-                                <th>Avg ASR ↓</th>
-                                <th>Avg TSR ↑</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="model-name">GPT-5-High</td>
-                                <td>12.3%</td>
-                                <td>15.8%</td>
-                                <td>18.2%</td>
-                                <td>16.7%</td>
-                                <td>13.9%</td>
-                                <td class="highlight">15.4%</td>
-                                <td class="highlight">72.4%</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="model-name">Claude-4.0-Opus</td>
-                                <td>17.2%</td>
-                                <td>19.1%</td>
-                                <td>21.3%</td>
-                                <td>20.6%</td>
-                                <td>17.5%</td>
-                                <td class="highlight">19.1%</td>
-                                <td class="highlight">67.2%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="function-tab">
-                <div class="table-container">
-                    <table class="leaderboard-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Model</th>
-                                <th>Location Nav</th>
-                                <th>Repository</th>
-                                <th>Financial</th>
-                                <th>Browser</th>
-                                <th>Web Search</th>
-                                <th>Avg ASR ↓</th>
-                                <th>Avg TSR ↑</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="model-name">GPT-5-Medium</td>
-                                <td>14.1%</td>
-                                <td>16.9%</td>
-                                <td>19.4%</td>
-                                <td>17.8%</td>
-                                <td>15.2%</td>
-                                <td class="highlight">16.7%</td>
-                                <td class="highlight">70.8%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="insights">
-            <h3>Key Findings</h3>
-            <div class="insights-grid">
-                <div class="insight-card">
-                    <h4>📉 Overall Security Challenges</h4>
-                    <p>Even state-of-the-art models show significant security vulnerabilities, indicating
-                        substantial room for improvement in handling real-world MCP server interactions.</p>
-                </div>
-                <div class="insight-card">
-                    <h4>🎯 Cross-Domain Variations</h4>
-                    <p>Models demonstrate markedly different security profiles across application domains,
-                        suggesting the need for domain-specific security optimizations.</p>
-                </div>
-                <div class="insight-card">
-                    <h4>⚔️ Multi-Layer Attacks</h4>
-                    <p>Server, host, and user layer attacks exhibit different success patterns, requiring
-                        multi-layered defense strategies.</p>
-                </div>
-            </div>
-        </div>
-    </section> -->
 
 
     <section id="results" class="section">
