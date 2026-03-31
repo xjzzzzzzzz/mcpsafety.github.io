@@ -204,11 +204,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const wrapper = document.createElement("div");
     wrapper.className = "code-with-copy";
-    const scrollBox = document.createElement("div");
-    scrollBox.className = "code-scroll";
     parent.insertBefore(wrapper, pre);
-    wrapper.appendChild(scrollBox);
-    scrollBox.appendChild(pre);
+    wrapper.appendChild(pre);
 
     const button = document.createElement("button");
     button.type = "button";
