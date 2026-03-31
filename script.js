@@ -199,10 +199,12 @@ document.addEventListener("DOMContentLoaded", function () {
   codeBlocks.forEach((block) => {
     const pre = block.parentElement;
     if (!pre || pre.tagName !== "PRE" || pre.closest(".code-with-copy")) return;
+    const parent = pre.parentNode;
+    if (!parent) return;
 
     const wrapper = document.createElement("div");
     wrapper.className = "code-with-copy";
-    pre.parentNode.insertBefore(wrapper, pre);
+    parent.insertBefore(wrapper, pre);
     wrapper.appendChild(pre);
 
     const button = document.createElement("button");
