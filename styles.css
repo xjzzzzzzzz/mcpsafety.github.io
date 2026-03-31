@@ -2116,30 +2116,55 @@ table.no-attack-inline td {
         max-height: 200px;
     }
 }
-/* Get Started：代码块在窄屏下不撑破布局，长行横向滚动 */
+/* Get Started：代码块在窄屏下不撑破布局，长行在 pre 内横向滚动
+   原因：.steps 为 flex-direction:column 时，.step 作为 flex 子项默认 min-width:auto，
+   会被超长 pre 内容在「横向」上撑开；仅给 .step-content 设 min-width:0 不够。
+   code 设 width:max-content 让最宽一行决定内部宽度，从而触发 pre 的 overflow-x。 */
+#getting-started .steps {
+    min-width: 0;
+    width: 100%;
+}
+
+#getting-started .steps > .step {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
 .steps .step,
 .step-content {
-  min-width: 0; /* flex 子项默认可 shrink，否则 pre 溢出无效 */
+    min-width: 0;
 }
 
+#getting-started .step-content {
+    width: 100%;
+    max-width: 100%;
+}
+
+.step-content pre,
 .step pre {
-  max-width: 100%;
-  margin: 0;
-  padding: 1rem 1.1rem;
-  border-radius: 8px;
-  box-sizing: border-box;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  /* 可选：滚动条更明显（WebKit） */
-  scrollbar-gutter: stable;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 8px;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-gutter: stable;
 }
 
+.step-content pre code,
 .step pre code {
-  display: block;
-  white-space: pre;      /* 保持命令原样，不自动折行 */
-  word-break: normal;
-  overflow-wrap: normal;
-  font-size: 0.85rem;    /* 可选：略缩小字号多塞一点 */
-  line-height: 1.45;
+    display: block;
+    width: max-content;
+    min-width: 100%;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+    font-size: 0.85rem;
+    line-height: 1.45;
 }
