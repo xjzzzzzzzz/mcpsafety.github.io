@@ -2169,11 +2169,14 @@ table.no-attack-inline td {
     line-height: 1.45;
 }
 
-/* Copy：滚动在 .code-scroll；按钮相对 .code-scroll 定位 = 对齐「当前可见」代码块右缘，避免超出深蓝背景 */
+/* Copy：横向滚动仅在 .code-scroll；按钮在 .code-with-copy 上 absolute，不随滚动。
+   不用 scrollbar-gutter:stable + pre 用 max(100%,max-content)，避免无滚动条时按钮跑出深蓝底 */
 .code-with-copy {
+    position: relative;
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    z-index: 0;
 }
 
 .step-content .code-with-copy {
@@ -2181,7 +2184,6 @@ table.no-attack-inline td {
 }
 
 .code-with-copy .code-scroll {
-    position: relative;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -2206,7 +2208,7 @@ table.no-attack-inline td {
     box-sizing: border-box;
 }
 
-.code-scroll .copy-button {
+.code-with-copy .copy-button {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -2225,12 +2227,12 @@ table.no-attack-inline td {
     transition: opacity 0.25s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.code-scroll:hover .copy-button,
-.code-scroll:focus-within .copy-button {
+.code-with-copy:hover .copy-button,
+.code-with-copy:focus-within .copy-button {
     opacity: 1;
 }
 
-.code-scroll .copy-button.copy-button--success {
+.code-with-copy .copy-button.copy-button--success {
     background: #10b981;
     color: #fff;
     border-color: #059669;
@@ -2238,7 +2240,7 @@ table.no-attack-inline td {
 }
 
 @media (hover: none) {
-    .code-scroll .copy-button {
+    .code-with-copy .copy-button {
         opacity: 0.9;
     }
 }
