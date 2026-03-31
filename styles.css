@@ -2181,9 +2181,29 @@ table.no-attack-inline td {
     margin-top: 1rem;
 }
 
-.step-content .code-with-copy pre {
+/* 横向滚动只发生在 .code-scroll，Copy 定位在更外层，绝不跟着滚 */
+.code-with-copy .code-scroll {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-gutter: stable;
+}
+
+.step-content .code-with-copy .code-scroll pre {
     margin-top: 0;
+    margin-bottom: 0;
     padding-top: 2.5rem;
+    /* 由外层 div 负责滚动，pre 自身不建立横向滚动条 */
+    overflow-x: visible;
+    overflow-y: visible;
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+    box-sizing: border-box;
 }
 
 .code-with-copy .copy-button {
