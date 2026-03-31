@@ -194,57 +194,38 @@ document.addEventListener("DOMContentLoaded", function () {
     observer.observe(card);
   });
 
-  // Code copy functionality
+  // Code copy functionality：按钮放在 pre 外层的 .code-with-copy 上，避免随 pre 横向滚动条一起移动
   const codeBlocks = document.querySelectorAll("pre code");
   codeBlocks.forEach((block) => {
     const pre = block.parentElement;
+    if (!pre || pre.tagName !== "PRE" || pre.closest(".code-with-copy")) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-with-copy";
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
     const button = document.createElement("button");
+    button.type = "button";
     button.className = "copy-button";
-    button.innerHTML = "Copy";
-    button.style.cssText = `
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: #1f2937;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s;
-        `;
-
-    pre.style.position = "relative";
-    pre.appendChild(button);
-
-    pre.addEventListener("mouseenter", () => {
-      button.style.opacity = "1";
-    });
-
-    pre.addEventListener("mouseleave", () => {
-      button.style.opacity = "0";
-    });
+    button.textContent = "Copy";
+    wrapper.appendChild(button);
 
     button.addEventListener("click", async () => {
       const code = block.textContent;
       try {
         await navigator.clipboard.writeText(code);
-        button.innerHTML = "Copied!";
-        button.style.background = "#10b981";
-        button.style.color = "white";
+        button.textContent = "Copied!";
+        button.classList.add("copy-button--success");
         setTimeout(() => {
-          button.innerHTML = "Copy";
-          button.style.background = "rgba(255, 255, 255, 0.9)";
-          button.style.color = "#1f2937";
+          button.textContent = "Copy";
+          button.classList.remove("copy-button--success");
         }, 2000);
       } catch (err) {
         console.error("Copy failed:", err);
-        button.innerHTML = "Failed";
+        button.textContent = "Failed";
         setTimeout(() => {
-          button.innerHTML = "Copy";
+          button.textContent = "Copy";
         }, 2000);
       }
     });
