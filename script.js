@@ -1,2243 +1,1176 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// Tab switching functionality
+document.addEventListener("DOMContentLoaded", function () {
+  // Get all tab buttons
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  // Add click event to each tab button
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const targetTab = this.getAttribute("data-tab");
+
+      // Remove active class from all buttons
+      tabButtons.forEach((btn) => btn.classList.remove("active"));
+      // Add active class to current button
+      this.classList.add("active");
+
+      // Hide all tab contents
+      tabContents.forEach((content) => content.classList.remove("active"));
+      // Show target tab content
+      const targetContent = document.getElementById(`${targetTab}-tab`);
+      if (targetContent) {
+        targetContent.classList.add("active");
+      }
+    });
+  });
+
+  // Expandable task categories
+  const taskHeaders = document.querySelectorAll(".task-header");
+  taskHeaders.forEach((header) => {
+    header.addEventListener("click", function () {
+      const taskId = this.getAttribute("data-task");
+      const taskContent = document.getElementById(`${taskId}-tasks`);
+
+      // Toggle active class on header
+      this.classList.toggle("active");
+
+      // Toggle active class on content
+      if (taskContent) {
+        taskContent.classList.toggle("active");
+      }
+    });
+  });
+
+  // Sidebar toggle functionality
+  const sidebar = document.getElementById("taskSidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  
+  if (sidebar && sidebarToggle) {
+    sidebarToggle.addEventListener("click", function () {
+      sidebar.classList.toggle("hidden");
+      const icon = this.querySelector("i");
+      if (sidebar.classList.contains("hidden")) {
+        icon.classList.remove("fa-chevron-left");
+        icon.classList.add("fa-chevron-right");
+      } else {
+        icon.classList.remove("fa-chevron-right");
+        icon.classList.add("fa-chevron-left");
+      }
+    });
+  }
+
+  // Smooth scroll to anchor
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
+  });
+
+  // Top navbar scroll spy (set active nav-link on section in view)
+  const topNavLinks = document.querySelectorAll(".nav-links a");
+  const sectionIds = [
+    "overview",
+    "tasks",
+    "results",
+    "attack-types",
+    "getting-started",
+  ];
+  const idToLink = new Map();
+  topNavLinks.forEach((link) => {
+    const href = link.getAttribute("href");
+    if (href && href.startsWith("#")) {
+      const id = href.substring(1);
+      idToLink.set(id, link);
+    }
+  });
+
+  const observedSections = sectionIds
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+
+  let currentActiveId = null;
+  const navObserver = new IntersectionObserver(
+    (entries) => {
+      let best = { id: null, ratio: 0 };
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio > best.ratio) {
+          best = { id: entry.target.id, ratio: entry.intersectionRatio };
+        }
+      });
+      if (best.id && best.id !== currentActiveId) {
+        currentActiveId = best.id;
+        topNavLinks.forEach((l) => l.classList.remove("active"));
+        const link = idToLink.get(best.id);
+        if (link) link.classList.add("active");
+      }
+    },
+    {
+      threshold: [0.2, 0.4, 0.6],
+      rootMargin: "-80px 0px -50% 0px",
+    }
+  );
+
+  observedSections.forEach((sec) => navObserver.observe(sec));
+
+  // Fallback: scroll-based spy if IO misses
+  function updateActiveByScroll() {
+    let bestId = null;
+    let bestDistance = Infinity;
+    observedSections.forEach((sec) => {
+      const rect = sec.getBoundingClientRect();
+      const headerOffset = 80; // sticky header height approx
+      const distance = Math.abs(
+        rect.top - headerOffset - window.innerHeight * 0.2
+      );
+      if (
+        distance < bestDistance &&
+        rect.bottom > headerOffset &&
+        rect.top < window.innerHeight * 0.8
+      ) {
+        bestDistance = distance;
+        bestId = sec.id;
+      }
+    });
+    if (bestId && bestId !== currentActiveId) {
+      currentActiveId = bestId;
+      topNavLinks.forEach((l) => l.classList.remove("active"));
+      const link = idToLink.get(bestId);
+      if (link) link.classList.add("active");
+    }
+  }
+
+  window.addEventListener("scroll", updateActiveByScroll, { passive: true });
+  updateActiveByScroll();
+
+  // Navbar scroll effect (guard missing .navbar)
+  let lastScroll = 0;
+  const navbar = document.querySelector(".navbar");
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!navbar) return; // guard
+      const currentScroll = window.pageYOffset;
+      if (currentScroll <= 0) {
+        navbar.style.boxShadow = "0 1px 3px 0 rgba(0, 0, 0, 0.1)";
+      } else {
+        navbar.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)";
+      }
+      lastScroll = currentScroll;
+    },
+    { passive: true }
+  );
+
+  // Add scroll animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -100px 0px",
+  };
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+      }
+    });
+  }, observerOptions);
+
+  // Observe all card elements
+  const cards = document.querySelectorAll(
+    ".feature-card, .security-card, .attack-card, .insight-card, .step, .task-category"
+  );
+  cards.forEach((card) => {
+    card.style.opacity = "0";
+    card.style.transform = "translateY(20px)";
+    card.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+    observer.observe(card);
+  });
+
+  // Code copy functionality：按钮放在 pre 外层的 .code-with-copy 上，避免随 pre 横向滚动条一起移动
+  const codeBlocks = document.querySelectorAll("pre code");
+  codeBlocks.forEach((block) => {
+    const pre = block.parentElement;
+    if (!pre || pre.tagName !== "PRE" || pre.closest(".code-with-copy")) return;
+    const parent = pre.parentNode;
+    if (!parent) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-with-copy";
+    const scrollBox = document.createElement("div");
+    scrollBox.className = "code-scroll";
+    parent.insertBefore(wrapper, pre);
+    wrapper.appendChild(scrollBox);
+    scrollBox.appendChild(pre);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "copy-button";
+    button.textContent = "Copy";
+    scrollBox.appendChild(button);
+
+    button.addEventListener("click", async () => {
+      const code = block.textContent;
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = "Copied!";
+        button.classList.add("copy-button--success");
+        setTimeout(() => {
+          button.textContent = "Copy";
+          button.classList.remove("copy-button--success");
+        }, 2000);
+      } catch (err) {
+        console.error("Copy failed:", err);
+        button.textContent = "Failed";
+        setTimeout(() => {
+          button.textContent = "Copy";
+        }, 2000);
+      }
+    });
+  });
+
+  // Responsive navigation menu
+  const createMobileMenu = () => {
+    const navMenu = document.querySelector(".nav-menu");
+    const navContainer = document.querySelector(".nav-container");
+
+    if (window.innerWidth <= 768) {
+      if (!document.querySelector(".menu-toggle")) {
+        const menuToggle = document.createElement("button");
+        menuToggle.className = "menu-toggle";
+        menuToggle.innerHTML = "☰";
+        menuToggle.style.cssText = `
+                    display: block;
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    color: var(--text-primary);
+                `;
+
+        navContainer.insertBefore(menuToggle, navMenu);
+
+        menuToggle.addEventListener("click", () => {
+          navMenu.style.display =
+            navMenu.style.display === "flex" ? "none" : "flex";
+        });
+      }
+    } else {
+      const menuToggle = document.querySelector(".menu-toggle");
+      if (menuToggle) {
+        menuToggle.remove();
+        navMenu.style.display = "flex";
+      }
+    }
+  };
+
+  createMobileMenu();
+  window.addEventListener("resize", createMobileMenu);
+
+  // Add loading animation
+  document.body.style.opacity = "0";
+  setTimeout(() => {
+    document.body.style.transition = "opacity 0.5s ease-in";
+    document.body.style.opacity = "1";
+  }, 100);
+
+  // Statistics animation (if needed)
+  const animateValue = (element, start, end, duration) => {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      element.textContent = Math.floor(progress * (end - start) + start);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  };
+
+  // Add animation for statistics numbers
+  const stats = document.querySelectorAll(".stat-number");
+  stats.forEach((stat) => {
+    const value = parseInt(stat.textContent);
+    observer.observe(stat);
+    stat.addEventListener(
+      "intersect",
+      () => {
+        animateValue(stat, 0, value, 2000);
+      },
+      { once: true }
+    );
+  });
+});
+
+// Theme toggle functionality (optional)
+function toggleTheme() {
+  const body = document.body;
+  const currentTheme = body.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  body.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
 }
 
-:root {
-    --primary-color: #2563eb;
-    --secondary-color: #1e40af;
-    --danger-color: #dc2626;
-    --warning-color: #f59e0b;
-    --success-color: #10b981;
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --bg-gray: #f9fafb;
-    --bg-white: #ffffff;
-    --border-color: #e5e7eb;
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+// Load saved theme
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) {
+  document.body.setAttribute("data-theme", savedTheme);
 }
 
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.6;
-    color: #1f2937;
-    background: #f9fafb;
-    color: var(--text-primary);
-    overflow-x: hidden;
-}
-
-/* Header */
-.header {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1.5rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.header-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #2563eb;
-    text-decoration: none;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-}
-
-.nav-links a {
-    color: #6b7280;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: #2563eb;
-}
-
-/* Hero Section */
-.hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 6rem 0;
-    text-align: center;
-}
-
-.hero-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 3rem;
-    opacity: 0.9;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background: white;
-    color: #2563eb;
-}
-
-.btn-primary:hover {
-    background: #f8fafc;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-}
-
-.btn-secondary:hover {
-    background: white;
-    color: #2563eb;
-}
-
-/* Main Content */
-.main-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.section {
-    padding: 0 6rem;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 1rem 0;
-    text-align: center;
-}
-
-.section-description {
-    font-size: 1.125rem;
-    color: #6b7280;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.section-gray {
-    background: #f9fafb;
-}
-
-/* Stats Section */
-.stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin: 3rem 0;
-}
-
-.stat-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.stat-number {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    color: #6b7280;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.domain-stats {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.domain-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-}
-
-.domain-stat-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    transition: all 0.2s;
-}
-
-.domain-stat-item:hover {
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
-.domain-stat-icon {
-    font-size: 2rem;
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.domain-stat-info {
-    flex: 1;
-}
-
-.domain-stat-name {
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 0.25rem;
-}
-
-.domain-stat-count {
-    color: #6b7280;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.domain-section {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.domain-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e5e7eb;
-    transition: background-color 0.2s;
-}
-
-.domain-header:hover {
-    background-color: #f9fafb;
-    border-radius: 8px;
-    padding: 1rem;
-    margin: -1rem -1rem 1.5rem -1rem;
-}
-
-.domain-expand-icon {
-    color: #6b7280;
-    font-size: 1rem;
-}
-
-.domain-icon {
-    font-size: 2rem;
-}
-
-.domain-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-.domain-count {
-    background: #dbeafe;
-    color: #1e40af;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-left: auto;
-}
-
-
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.navbar {
-    background: var(--bg-white);
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 1rem 0;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
-
-.nav-menu a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.nav-menu a:hover {
-    color: var(--primary-color);
-}
-
-.btn-primary {
-    background: white;
-    color: var(--primary-color);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 2px solid white;
-}
-
-.btn-secondary:hover {
-    background: white;
-    color: var(--primary-color);
-}
-
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.feature-card {
-    background: var(--bg-white);
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: var(--shadow);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.feature-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.feature-card p {
-    color: var(--text-secondary);
-}
-
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
+// Scroll to top button
+window.addEventListener("scroll", function () {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  let scrollToTopBtn = document.getElementById("scrollToTop");
+
+  if (scrollTop > 300) {
+    if (!scrollToTopBtn) {
+      scrollToTopBtn = document.createElement("button");
+      scrollToTopBtn.id = "scrollToTop";
+      scrollToTopBtn.innerHTML = "↑";
+      scrollToTopBtn.style.cssText = `
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                width: 50px;
+                height: 50px;
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                transition: all 0.3s;
+            `;
+      document.body.appendChild(scrollToTopBtn);
+
+      scrollToTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      scrollToTopBtn.addEventListener("mouseenter", () => {
+        scrollToTopBtn.style.transform = "scale(1.1)";
+      });
+
+      scrollToTopBtn.addEventListener("mouseleave", () => {
+        scrollToTopBtn.style.transform = "scale(1)";
+      });
+    }
+    scrollToTopBtn.style.display = "block";
+  } else if (scrollToTopBtn) {
+    scrollToTopBtn.style.display = "none";
+  }
+});
+
+// Extracted from inline scripts
+// Tab functionality
+document.addEventListener("DOMContentLoaded", function () {
+  // Leaderboard tabs
+  const leaderboardTabButtons = document.querySelectorAll(
+    "#leaderboard .tab-button"
+  );
+  const leaderboardTabContents = document.querySelectorAll(
+    "#leaderboard .tab-content"
+  );
+
+  leaderboardTabButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const targetTab = this.getAttribute("data-tab");
+
+      // Remove active class from all leaderboard buttons and contents
+      leaderboardTabButtons.forEach((btn) => btn.classList.remove("active"));
+      leaderboardTabContents.forEach((content) =>
+        content.classList.remove("active")
+      );
+
+      // Add active class to clicked button and corresponding content
+      this.classList.add("active");
+      document.getElementById(targetTab + "-tab").classList.add("active");
+    });
+  });
+
+  // Attack types tabs
+  const attackTabButtons = document.querySelectorAll(
+    "#attack-types .tab-button"
+  );
+  const attackTabContents = document.querySelectorAll(
+    "#attack-types .tab-content"
+  );
+
+  attackTabButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const targetTab = this.getAttribute("data-tab");
+
+      // Remove active class from all attack type buttons and contents
+      attackTabButtons.forEach((btn) => btn.classList.remove("active"));
+      attackTabContents.forEach((content) =>
+        content.classList.remove("active")
+      );
+
+      // Add active class to clicked button and corresponding content
+      this.classList.add("active");
+      document.getElementById(targetTab + "-tab").classList.add("active");
+    });
+  });
+  // Smooth scrolling for navigation links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      // Scope active state to the clicked anchor's own nav container
+      const topNavContainer = this.closest(".nav-links");
+      const sideNavContainer = this.closest(".domain-nav");
+
+      if (topNavContainer) {
+        topNavContainer
+          .querySelectorAll("a")
+          .forEach((a) => a.classList.remove("active"));
+        this.classList.add("active");
+      } else if (sideNavContainer) {
+        sideNavContainer
+          .querySelectorAll("a")
+          .forEach((a) => a.classList.remove("active"));
+        this.classList.add("active");
+      }
+
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
+  });
+
+  // Calculate per-row averages for Table 2 (❌ without prompt, ✅ with prompt)
+  function calculateTable2Averages() {
+    // Locate Table 2 by finding the table that contains "Table 2: Attack Success Rate" heading
+    const headings = Array.from(document.querySelectorAll("h3"));
+    const table2Heading = headings.find((h) =>
+      h.textContent.includes("Table 2: Attack Success Rate")
+    );
+    if (!table2Heading) {
+      console.warn("Table 2 heading not found");
+      return;
+    }
+    // Find the table after the heading (may be inside a container)
+    let element = table2Heading.nextElementSibling;
+    while (element) {
+      if (element.tagName === "TABLE") {
+        break;
+      }
+      // Check if element contains a table
+      const table = element.querySelector && element.querySelector("table");
+      if (table) {
+        element = table;
+        break;
+      }
+      element = element.nextElementSibling;
+    }
+    const table = element && element.tagName === "TABLE" ? element : null;
+    if (!table) {
+      console.warn("Table 2 not found after heading");
+      return;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.attack-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.attack-card {
-    background: var(--bg-white);
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s;
-}
-
-.attack-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary-color);
-}
-
-.attack-card h4 {
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.attack-card p {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-/* 步骤 */
-.steps {
-    margin-top: 3rem;
-}
-
-.step {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 3rem;
-    align-items: flex-start;
-}
-
-.step-number {
-    flex-shrink: 0;
-    width: 60px;
-    height: 60px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.step-content {
-    flex: 1;
-}
-
-.step-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.step-content pre {
-    background: var(--text-primary);
-    color: #f9fafb;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-    margin-top: 1rem;
-}
-
-.step-content code {
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
-}
-
-.docs-link {
-    text-align: center;
-    margin-top: 3rem;
-    padding: 2rem;
-    background: var(--bg-gray);
-    border-radius: 1rem;
-}
-
-.docs-link a {
-    color: var(--primary-color);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.docs-link a:hover {
-    text-decoration: underline;
-}
-
-/* 页脚 */
-.footer {
-    background: var(--text-primary);
-    color: white;
-    padding: 3rem 0 1rem;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.footer-section h4 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.footer-section p {
-    opacity: 0.8;
-    margin-bottom: 0.5rem;
-}
-
-.footer-section ul {
-    list-style: none;
-}
-
-.footer-section li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section a {
-    color: white;
-    text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-}
-
-.footer-section a:hover {
-    opacity: 1;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    opacity: 0.8;
-}
-
-/* Task Categories */
-.task-categories {
-    margin-top: 3rem;
-}
-
-.expand-icon {
-    font-size: 1.25rem;
-    transition: transform 0.3s;
-    color: var(--primary-color);
-}
-
-.task-header.active .expand-icon {
-    transform: rotate(180deg);
-}
-
-.task-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-}
-
-.task-content.active {
-    max-height: 2000px;
-    transition: max-height 0.6s ease-in;
-}
-
-.task-list {
-    padding: 0 1.5rem 1.5rem;
-}
-
-.task-item {
-    background: var(--bg-gray);
-    padding: 1.25rem;
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-    border-left: 4px solid var(--primary-color);
-}
-
-.task-item:last-child {
-    margin-bottom: 0;
-}
-
-.task-item h4 {
-    font-size: 1.125rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.task-item p {
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-}
-
-.task-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-server {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-host {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.badge-user {
-    background: #fce7f3;
-    color: #9f1239;
-}
-
-.task-count {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-/* Leaderboard Tables */
-.leaderboard-tabs {
-    margin-top: 2rem;
-}
-
-.table-container {
-    overflow-x: auto;
-    margin-top: 2rem;
-    background: var(--bg-white);
-    border-radius: 1rem;
-    box-shadow: var(--shadow);
-}
-
-.leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-}
-
-.leaderboard-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.leaderboard-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.leaderboard-table td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.leaderboard-table tbody tr:hover {
-    background: var(--bg-gray);
-}
-
-.leaderboard-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.model-name {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.highlight {
-    background: #eff6ff;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 1.5rem;
+    const thead = table.querySelector("thead");
+    const headerRows = thead ? thead.querySelectorAll("tr") : [];
+    if (headerRows.length < 2) {
+      console.warn("Table 2 header structure not as expected");
+      return;
     }
 
-    .hero-subtitle {
-        font-size: 1rem;
+    // First header row has grouped labels: Model | CT | EPM | ... | RI | Average
+    const groupRow = headerRows[0];
+    const groupHeaders = Array.from(groupRow.querySelectorAll("th"));
+
+    // Build group map excluding the first "Model" column
+    // Track the starting index (in data cells, i.e., excluding model) for each group
+    let dataColIndex = 0; // index in dataCells
+    const groups = [];
+    groupHeaders.forEach((th, idx) => {
+      const label = (th.textContent || "").trim();
+      const span = parseInt(th.getAttribute("colspan") || "1", 10);
+      if (idx === 0) {
+        // Model column
+        return;
+      }
+      groups.push({ label, start: dataColIndex, span });
+      dataColIndex += span;
+    });
+
+    // Identify the Average group (last group) and the attack-type groups before it
+    const avgGroupIndex = groups.findIndex((g) =>
+      g.label.toLowerCase().includes("average")
+    );
+    const attackGroups =
+      avgGroupIndex >= 0 ? groups.slice(0, avgGroupIndex) : groups;
+    const averageGroup = avgGroupIndex >= 0 ? groups[avgGroupIndex] : null;
+
+    // Process rows
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const dataRows = rows.filter((row) => {
+      const firstCell = row.querySelector("td");
+      return firstCell && !firstCell.querySelector("strong");
+    });
+
+    // Attack type weights based on the actual task statistics (percentage shares)
+    const weights = {
+      CT: 3.67, // Credential Theft
+      EPM: 0.41, // Excessive Privileges Misuse
+      FO: 9.39, // Function Overlapping
+      FRI: 5.71, // Function Return Injection
+      MCE: 4.08, // Malicious Code Execution
+      PM: 8.98, // Preference Manipulation
+      RAC: 4.08, // Remote Access Control
+      RADE: 0.82, // Retrieval-Agent Deception
+      RPA: 2.86, // Rug Pull Attack
+      CI: 12.65, // Tool Poisoning-Command Injection
+      FSP: 2.86, // Tool Poisoning-FileSystem Poisoning
+      FDI: 9.39, // Tool Poisoning-Function Dependency Injection
+      NRP: 2.45, // Tool Poisoning-Network Request Poisoning
+      PP: 7.35, // Tool Poisoning-Parameter Poisoning
+      TR: 4.49, // Tool Poisoning-Tool Redirection
+      TS: 8.57, // Tool Shadowing
+      DT: 3.27, // Data Tampering
+      IS: 0.41, // Identity Spoofing
+      II: 4.9, // Intent Injection
+      RI: 3.67, // Replay Injection
+    };
+
+    dataRows.forEach((row) => {
+      const cells = Array.from(row.querySelectorAll("td"));
+      const dataCells = cells.slice(1); // exclude model name
+
+      let sumNo = 0,
+        wNo = 0,
+        sumYes = 0,
+        wYes = 0;
+
+      attackGroups.forEach((g) => {
+        // Expect span = 2 for each attack group: [❌, ✅]
+        const withoutCell = dataCells[g.start];
+        const withCell = dataCells[g.start + 1];
+        const vNo = withoutCell
+          ? parseFloat(withoutCell.textContent.trim().replace("%", ""))
+          : NaN;
+        const vYes = withCell
+          ? parseFloat(withCell.textContent.trim().replace("%", ""))
+          : NaN;
+        const weight = weights[g.label] || 0;
+        if (!isNaN(vNo) && weight > 0) {
+          sumNo += vNo * weight;
+          wNo += weight;
+        }
+        if (!isNaN(vYes) && weight > 0) {
+          sumYes += vYes * weight;
+          wYes += weight;
+        }
+      });
+
+      const avgNo = wNo ? (sumNo / wNo).toFixed(2) : "";
+      const avgYes = wYes ? (sumYes / wYes).toFixed(2) : "";
+
+      // Write into Average group cells, or append if missing
+      if (averageGroup) {
+        // Ensure there are enough cells
+        while (dataCells.length < averageGroup.start + 2) {
+          const td = document.createElement("td");
+          row.appendChild(td);
+          dataCells.push(td);
+        }
+        dataCells[averageGroup.start].textContent = avgNo;
+        dataCells[averageGroup.start + 1].textContent = avgYes;
+
+        // Optional styling
+        [
+          dataCells[averageGroup.start],
+          dataCells[averageGroup.start + 1],
+        ].forEach((td) => {
+          td.style.fontWeight = "700";
+          td.style.background = "#eff6ff";
+        });
+      } else {
+        const tdNo = document.createElement("td");
+        const tdYes = document.createElement("td");
+        tdNo.textContent = avgNo;
+        tdYes.textContent = avgYes;
+        row.appendChild(tdNo);
+        row.appendChild(tdYes);
+      }
+    });
+  }
+
+  // Calculate Table 1 Overall four columns (TSR❌/TSR✅/ASR❌/ASR✅) using domain weights
+  function calculateTable1Overall() {
+    // Find Table 1: the first .leaderboard-table inside .results-tables
+    const tables = document.querySelectorAll(
+      ".results-tables .leaderboard-table"
+    );
+    const table = tables[0];
+    if (!table) {
+      console.warn("Table 1 not found");
+      return;
     }
 
-    .nav-menu {
-        flex-direction: column;
-        gap: 1rem;
+    // Parse header groups to identify domain groups and the Overall group
+    const thead = table.querySelector("thead");
+    const headerRows = thead ? thead.querySelectorAll("tr") : [];
+    if (headerRows.length < 1) {
+      console.warn("Table 1 header missing");
+      return;
+    }
+    const groupRow = headerRows[0];
+    const groupHeaders = Array.from(groupRow.querySelectorAll("th"));
+
+    let dataColIndex = 0; // index within data cells (excluding model column)
+    const groups = [];
+    groupHeaders.forEach((th, idx) => {
+      const label = (th.textContent || "").trim();
+      const span = parseInt(th.getAttribute("colspan") || "1", 10);
+      if (idx === 0) return; // skip Model
+      if (span <= 1) return; // skip Score (rowspan)
+      groups.push({ label, start: dataColIndex, span });
+      dataColIndex += span; // each domain has 4 columns
+    });
+
+    const overallIdx = groups.findIndex((g) =>
+      g.label.toLowerCase().includes("overall")
+    );
+    if (overallIdx < 0) {
+      console.warn("Overall group not found in Table 1 header");
+      return;
+    }
+    const overallGroup = groups[overallIdx];
+    const domainGroups = groups.slice(0, overallIdx);
+
+    // Domain weights (percentages)
+    const weights = {
+      "Repository Management": 22.86,
+      "Location Navigation": 21.63,
+      "Financial Analysis": 21.63,
+      "Web Searching": 21.63,
+      "Browser Automation": 12.24,
+    };
+
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const dataRows = rows.filter((row) => {
+      const firstCell = row.querySelector("td");
+      return firstCell && !firstCell.querySelector("strong");
+    });
+
+    dataRows.forEach((row) => {
+      const cells = Array.from(row.querySelectorAll("td"));
+      const dataCells = cells.slice(1); // exclude model name column
+
+      let sumTSRNo = 0,
+        wTSRNo = 0,
+        sumTSRYes = 0,
+        wTSRYes = 0,
+        sumASRNo = 0,
+        wASRNo = 0,
+        sumASRYes = 0,
+        wASRYes = 0;
+
+      domainGroups.forEach((g) => {
+        const w = weights[g.label] || 0;
+        if (w <= 0) return;
+
+        // Each domain group has 4 columns: [TSR❌, TSR✅, ASR❌, ASR✅]
+        const tsrNo = parseFloat(
+          (dataCells[g.start]?.textContent || "").trim()
+        );
+        const tsrYes = parseFloat(
+          (dataCells[g.start + 1]?.textContent || "").trim()
+        );
+        const asrNo = parseFloat(
+          (dataCells[g.start + 2]?.textContent || "").trim()
+        );
+        const asrYes = parseFloat(
+          (dataCells[g.start + 3]?.textContent || "").trim()
+        );
+
+        if (!isNaN(tsrNo)) {
+          sumTSRNo += tsrNo * w;
+          wTSRNo += w;
+        }
+        if (!isNaN(tsrYes)) {
+          sumTSRYes += tsrYes * w;
+          wTSRYes += w;
+        }
+        if (!isNaN(asrNo)) {
+          sumASRNo += asrNo * w;
+          wASRNo += w;
+        }
+        if (!isNaN(asrYes)) {
+          sumASRYes += asrYes * w;
+          wASRYes += w;
+        }
+      });
+
+      const avgTSRNo = wTSRNo ? (sumTSRNo / wTSRNo).toFixed(2) : "";
+      const avgTSRYes = wTSRYes ? (sumTSRYes / wTSRYes).toFixed(2) : "";
+      const avgASRNo = wASRNo ? (sumASRNo / wASRNo).toFixed(2) : "";
+      const avgASRYes = wASRYes ? (sumASRYes / wASRYes).toFixed(2) : "";
+
+      // Ensure Overall cells exist, then write values
+      while (dataCells.length < overallGroup.start + 4) {
+        const td = document.createElement("td");
+        row.appendChild(td);
+        dataCells.push(td);
+      }
+      dataCells[overallGroup.start].textContent = avgTSRNo;
+      dataCells[overallGroup.start + 1].textContent = avgTSRYes;
+      dataCells[overallGroup.start + 2].textContent = avgASRNo;
+      dataCells[overallGroup.start + 3].textContent = avgASRYes;
+
+      // Subtle emphasis
+      [
+        dataCells[overallGroup.start],
+        dataCells[overallGroup.start + 1],
+        dataCells[overallGroup.start + 2],
+        dataCells[overallGroup.start + 3],
+      ].forEach((td) => {
+        td.style.fontWeight = "700";
+        td.style.background = "#eef2ff";
+      });
+    });
+  }
+
+  // Execute after DOM is ready
+  calculateTable1Overall();
+  calculateTable2Averages();
+
+  // Calculate composite scores for Table 1 using Overall (output: one cell shows ❌ and ✅ scores)
+  function calculateCompositeScores() {
+    // Weight parameters
+    const W1 = 0.6; // Weight of task success rate under safety conditions
+    const W2 = 0.4; // Weight of pure safety (lower ASR)
+
+    // Locate Table 1 (the first table) and parse header to find Overall group
+    const tables = document.querySelectorAll(
+      ".results-tables .leaderboard-table"
+    );
+    const table = tables[0];
+    if (!table) {
+      console.log("Table 1 not found for composite score");
+      return;
     }
 
-    .features-grid,
-    .security-cards,
-    .insights-grid,
-    .attack-grid {
-        grid-template-columns: 1fr;
+    const thead = table.querySelector("thead");
+    const headerRows = thead ? thead.querySelectorAll("tr") : [];
+    if (headerRows.length < 1) return;
+    const groupRow = headerRows[0];
+    const groupHeaders = Array.from(groupRow.querySelectorAll("th"));
+    let dataColIndex = 0;
+    const groups = [];
+    groupHeaders.forEach((th, idx) => {
+      const label = (th.textContent || "").trim();
+      const span = parseInt(th.getAttribute("colspan") || "1", 10);
+      if (idx === 0) return; // Model
+      if (span <= 1) return; // Score header (rowspan)
+      groups.push({ label, start: dataColIndex, span });
+      dataColIndex += span;
+    });
+    const overall = groups.find((g) =>
+      g.label.toLowerCase().includes("overall")
+    );
+    if (!overall) return;
+
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const dataRows = rows.filter((row) => {
+      const firstCell = row.querySelector("td");
+      return firstCell && !firstCell.querySelector("strong");
+    });
+
+    dataRows.forEach((row) => {
+      const cells = Array.from(row.querySelectorAll("td"));
+      const dataCells = cells.slice(1);
+
+      // Overall without prompt: TSR❌ at start+0, ASR❌ at start+2
+      const tsrNo = parseFloat(
+        (dataCells[overall.start]?.textContent || "").trim()
+      );
+      const asrNo = parseFloat(
+        (dataCells[overall.start + 2]?.textContent || "").trim()
+      );
+      // Overall with prompt: TSR✅ at start+1, ASR✅ at start+3
+      const tsrYes = parseFloat(
+        (dataCells[overall.start + 1]?.textContent || "").trim()
+      );
+      const asrYes = parseFloat(
+        (dataCells[overall.start + 3]?.textContent || "").trim()
+      );
+
+      let scoreNo = null;
+      let scoreYes = null;
+      if (!isNaN(tsrNo) && !isNaN(asrNo)) {
+        scoreNo = tsrNo * (1 - asrNo / 100) * W1 + (100 - asrNo) * W2;
+      }
+      if (!isNaN(tsrYes) && !isNaN(asrYes)) {
+        scoreYes = tsrYes * (1 - asrYes / 100) * W1 + (100 - asrYes) * W2;
+      }
+
+      // Ensure two Score columns exist right after Overall group
+      while (dataCells.length < overall.start + 6) {
+        const td = document.createElement("td");
+        row.appendChild(td);
+        dataCells.push(td);
+      }
+      const scoreNoCell = dataCells[overall.start + 4];
+      const scoreYesCell = dataCells[overall.start + 5];
+      scoreNoCell.textContent = scoreNo !== null ? scoreNo.toFixed(2) : "";
+      scoreYesCell.textContent = scoreYes !== null ? scoreYes.toFixed(2) : "";
+
+      // Optional styling
+      [scoreNoCell, scoreYesCell].forEach((td) => {
+        td.style.fontWeight = "700";
+        td.style.background = "#f0fdf4"; // light green tint
+      });
+    });
+  }
+
+  // Invoke composite score calculation function
+  calculateCompositeScores();
+  // Re-run highlight after averages and scores are populated (ensures Average columns are included)
+  if (typeof highlightMaxValues === "function") {
+    highlightMaxValues();
+  }
+});
+// Highlight maximum values in each column
+function highlightMaxValues() {
+  const tables = document.querySelectorAll(
+    ".results-tables .leaderboard-table"
+  );
+
+  tables.forEach((table) => {
+    const tbody = table.querySelector("tbody");
+    if (!tbody) return;
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    // Filter out category rows (Proprietary Models, Open-Source Models)
+    const dataRows = rows.filter((row) => {
+      const firstCell = row.querySelector("td");
+      return firstCell && !firstCell.querySelector("strong");
+    });
+
+    if (dataRows.length === 0) return;
+
+    // Determine per-column direction: true = higher is better (↑), false = lower is better (↓)
+    const thead = table.querySelector("thead");
+    const headerRows = thead ? Array.from(thead.querySelectorAll("tr")) : [];
+
+    // Try to find a header row that includes "TSR"/"ASR"
+    let tsrAsrRow = headerRows.find((tr) =>
+      Array.from(tr.querySelectorAll("th")).some((th) =>
+        /(TSR|ASR)/i.test((th.textContent || "").trim())
+      )
+    );
+
+    const directionForCols = []; // index aligned to data columns (skip Model)
+    if (tsrAsrRow) {
+      const ths = Array.from(tsrAsrRow.querySelectorAll("th"));
+      let started = false; // skip the first empty th in that row if present
+      ths.forEach((th) => {
+        const text = (th.textContent || "").trim();
+        const span = parseInt(th.getAttribute("colspan") || "1", 10);
+        // Heuristic: The first meaningful cell often is empty; only start when contains TSR/ASR
+        if (!/(TSR|ASR)/i.test(text)) {
+          // If we haven't started mapping yet, skip; otherwise keep padding
+          if (started) {
+            for (let i = 0; i < span; i++) directionForCols.push(false);
+          }
+          return;
+        }
+        started = true;
+        const higherIsBetter = /↑/.test(text) || /TSR/i.test(text);
+        for (let i = 0; i < span; i++) directionForCols.push(higherIsBetter);
+      });
+    } else {
+      // No TSR/ASR header row -> assume this table is ASR-only (like Table 2)
+      const sampleRow = dataRows[0];
+      const totalDataCols = sampleRow.querySelectorAll("td").length - 1;
+      for (let i = 0; i < totalDataCols; i++) directionForCols.push(false);
     }
 
-    .results-images {
-        grid-template-columns: 1fr;
+    // Get number of columns (excluding first column which is model name)
+    const numCols = dataRows[0].querySelectorAll("td").length - 1;
+
+    // For each column (starting from index 1, skipping model name)
+    for (let colIndex = 1; colIndex <= numCols; colIndex++) {
+      const values = [];
+      const cells = [];
+
+      // Collect all values in this column
+      dataRows.forEach((row) => {
+        const cell = row.querySelectorAll("td")[colIndex];
+        if (cell && cell.textContent.trim() !== "") {
+          const value = parseFloat(cell.textContent.trim());
+          if (!isNaN(value)) {
+            values.push(value);
+            cells.push({ cell, value });
+          }
+        }
+      });
+
+      if (values.length === 0) continue;
+
+      // Determine direction: default to higher for appended Score columns beyond mapping
+      const higherIsBetter =
+        colIndex - 1 < directionForCols.length
+          ? directionForCols[colIndex - 1]
+          : true; // Score↑
+
+      const targetValue = higherIsBetter
+        ? Math.max(...values)
+        : Math.min(...values);
+
+      // Highlight cells with target value
+      cells.forEach(({ cell, value }) => {
+        if (value === targetValue) {
+          cell.style.fontWeight = "700";
+          cell.style.color = "#059669";
+          cell.style.background = "rgba(5, 150, 105, 0.1)";
+          cell.style.borderRadius = "4px";
+          cell.style.padding = "1rem 0.75rem";
+        }
+      });
     }
+  });
+}
 
-    .step {
-        flex-direction: column;
+// Note: highlightMaxValues is invoked after table computations inside DOMContentLoaded above
+// Extracted from inline scripts
+// Tasks page functionality
+const domainConfig = {
+  location_navigation: {
+    icon: "🗺️",
+    title: "Location Navigation",
+    id: "location-navigation",
+  },
+  repository_management: {
+    icon: "📁",
+    title: "Repository Management",
+    id: "repository-management",
+  },
+  financial_analysis: {
+    icon: "💰",
+    title: "Financial Analysis",
+    id: "financial-analysis",
+  },
+  browser_automation: {
+    icon: "🌐",
+    title: "Browser Automation",
+    id: "browser-automation",
+  },
+  web_search: {
+    icon: "🔍",
+    title: "Web Search",
+    id: "web-search",
+  },
+};
+
+function initializeTasks() {
+  const container = document.getElementById("domains-container");
+  const tasksData = window.TASKS_DATA;
+
+  if (!tasksData) {
+    container.innerHTML =
+      '<div class="loading"><p>Error: Task data not loaded</p></div>';
+    return;
+  }
+
+  let totalTasks = 0;
+  let attackTasks = 0;
+  let html = "";
+
+  // Generate HTML for each domain
+  Object.keys(domainConfig).forEach((domainKey) => {
+    const domain = tasksData[domainKey];
+    if (!domain || !domain.tasks) return;
+
+    const tasks = domain.tasks;
+    totalTasks += tasks.length;
+    attackTasks += tasks.filter((t) => t.attack_category).length;
+
+    const config = domainConfig[domainKey];
+
+    html += `
+                    <div class="domain-section" id="${config.id}">
+                        <div class="domain-header" style="cursor: pointer;">
+                            <span class="domain-icon">${config.icon}</span>
+                            <h2 class="domain-title">${config.title}</h2>
+                            <span class="domain-count">${
+                              tasks.length
+                            } tasks</span>
+                            <i class="fas fa-chevron-down domain-expand-icon" style="margin-left: 0.5rem; transition: transform 0.3s;"></i>
+                        </div>
+                        <div class="tasks-grid collapsed">
+                            ${tasks
+                              .map((task, index) =>
+                                createTaskCard(task, domainKey, index)
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+  });
+
+  container.innerHTML = html;
+
+  // Stats are now static based on paper data
+
+  // Add event listeners to domain headers for expand/collapse
+  document.querySelectorAll(".domain-header").forEach((header) => {
+    header.addEventListener("click", function () {
+      const domainSection = this.closest(".domain-section");
+      const tasksGrid = domainSection.querySelector(".tasks-grid");
+      const expandIcon = this.querySelector(".domain-expand-icon");
+      
+      if (tasksGrid.classList.contains("collapsed")) {
+        tasksGrid.classList.remove("collapsed");
+        tasksGrid.classList.add("expanded");
+        expandIcon.classList.remove("fa-chevron-down");
+        expandIcon.classList.add("fa-chevron-up");
+      } else {
+        tasksGrid.classList.remove("expanded");
+        tasksGrid.classList.add("collapsed");
+        expandIcon.classList.remove("fa-chevron-up");
+        expandIcon.classList.add("fa-chevron-down");
+      }
+    });
+  });
+
+  // Add event listeners to view buttons
+  document.querySelectorAll(".view-btn").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const card = this.closest(".task-card");
+      const domain = card.dataset.domain;
+      const index = parseInt(card.dataset.index);
+      const task = tasksData[domain].tasks[index];
+      showTaskDetails(task);
+    });
+  });
+}
+
+function createTaskCard(task, domain, index) {
+  const attackBadge = task.attack_category
+    ? `<span class="attack-badge">${task.attack_category}</span>`
+    : "";
+
+  return `
+                <div class="task-card" data-domain="${domain}" data-index="${index}">
+                    <div class="task-head">
+                        <div class="task-id">${
+                          task.id || `Task ${index + 1}`
+                        }</div>
+                        <div class="task-category">${
+                          task.category || "General"
+                        }</div>
+                    </div>
+                    <div class="task-question">${
+                      task.question || "No description available"
+                    }</div>
+                    <div class="task-footer">
+                        ${attackBadge}
+                        <button class="view-btn">View Details</button>
+                    </div>
+                </div>
+            `;
+}
+
+function showTaskDetails(task) {
+  const modal = document.getElementById("taskModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalContent = document.getElementById("modalContent");
+
+  modalTitle.textContent = task.id || "Task Details";
+  modalContent.textContent = JSON.stringify(task, null, 2);
+  modal.classList.add("active");
+}
+
+// Modal controls
+document.getElementById("modalClose").addEventListener("click", () => {
+  document.getElementById("taskModal").classList.remove("active");
+});
+
+document.getElementById("taskModal").addEventListener("click", (e) => {
+  if (e.target.id === "taskModal") {
+    document.getElementById("taskModal").classList.remove("active");
+  }
+});
+
+// Search functionality
+document.getElementById("searchInput").addEventListener("input", function (e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const taskCards = document.querySelectorAll(".task-card");
+
+  taskCards.forEach((card) => {
+    const text = card.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
     }
+  });
+});
 
-    .step-number {
-        margin: 0 auto;
+// Navigation
+document.querySelectorAll(".domain-nav-link").forEach((link) => {
+  link.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    // Update active state
+    document
+      .querySelectorAll(".domain-nav-link")
+      .forEach((l) => l.classList.remove("active"));
+    this.classList.add("active");
+
+    // Scroll to section
+    const targetId = this.getAttribute("href").substring(1);
+    const targetSection = document.getElementById(targetId);
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  });
+});
 
-    .task-header h3 {
-        font-size: 1.125rem;
+// Scroll spy
+window.addEventListener("scroll", function () {
+  const sections = document.querySelectorAll(".domain-section, #overview");
+  const navLinks = document.querySelectorAll(".domain-nav-link");
+
+  let current = "overview";
+  sections.forEach((section) => {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) {
+      current = section.id;
     }
+  });
 
-    .leaderboard-table {
-        font-size: 0.75rem;
+  navLinks.forEach((link) => {
+    link.classList.remove("active");
+    if (link.getAttribute("href") === "#" + current) {
+      link.classList.add("active");
     }
-
-    .leaderboard-table th,
-    .leaderboard-table td {
-        padding: 0.5rem;
-    }
-}
-
-/* 平滑滚动 */
-html {
-    scroll-behavior: smooth;
-}
-
-::selection {
-    background: var(--primary-color);
-    color: white;
-}
-
-/* Baseline (No-attack) integration styles */
-.baseline-toolbar .btn-switch {
-    padding: 0.45rem 0.9rem;
-    border: 1px solid #cbd5e1;
-    background: #ffffff;
-    color: #374151;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all .15s ease-in-out;
-}
-
-.baseline-toolbar .btn-switch:hover {
-    background: #f8fafc;
-}
-
-.baseline-toolbar .btn-switch.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-}
-
-tr.no-attack-detail td {
-    background: #fcfcfd;
-    padding: 0.75rem 1rem;
-}
-
-.baseline-detail-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background: #ffffff;
-    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
-}
-
-.baseline-detail-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 0.5rem;
-}
-
-table.no-attack-inline {
-    width: auto;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-
-table.no-attack-inline th,
-table.no-attack-inline td {
-    border: 1px solid #e5e7eb;
-    padding: 0.35rem 0.6rem;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* Per-row toggle chevron for baseline details */
-.row-toggle {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.15rem 0.35rem;
-    margin-right: 0.35rem;
-    color: var(--primary-color);
-}
-
-.row-toggle:focus {
-    outline: 2px solid rgba(37, 99, 235, 0.35);
-    border-radius: 6px;
-}
-
-.row-toggle .chevron {
-    transition: transform 0.2s ease;
-}
-
-.row-toggle[aria-expanded="true"] .chevron {
-    transform: rotate(90deg);
-}
-
-/* Results & Analysis Tables */
-.subsection-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 2.5rem 0 0 0;
-}
-
-.results-tables .table-container {
-    margin-bottom: 2rem;
-    overflow-x: auto;
-    background: #fafaf9;
-    border-radius: 12px;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.results-tables .leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.results-tables .leaderboard-table th {
-    background: #0d9dda;
-    color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    padding: 1rem 0.75rem;
-    text-align: center;
-    border-bottom: 1px solid #e5e5e5;
-    position: sticky;
-    top: 0;
-    vertical-align: middle;
-    height: 40px;
-    white-space: nowrap;
-}
-
-.results-tables .leaderboard-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-
-.results-tables .leaderboard-table thead tr:nth-child(2) th:nth-child(2n+1),
-.results-tables .leaderboard-table thead tr:nth-child(3) th:nth-child(4n+1),
-.results-tables .leaderboard-table tbody td:nth-child(4n+1),
-.results-tables .attack-results-table tbody td:nth-child(2n+1) {
-    border-right: 2px solid #ddd;
-}
-
-.results-tables .leaderboard-table th:first-child {
-    text-align: left;
-    min-width: 200px;
-}
-
-.results-tables .leaderboard-table thead tr:first-child th {
-    font-size: 0.9rem;
-    font-weight: 700;
-    padding: 1.2rem 0.75rem;
-    border-right: 2px solid #ddd;
-}
-
-.results-tables .leaderboard-table thead tr:last-child th {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 0.8rem 0.75rem;
-    background: #0a7ba8;
-}
-
-.results-tables .leaderboard-table thead th {
-    text-align: center !important;
-    vertical-align: middle;
-}
-
-.results-tables .leaderboard-table thead th:first-child {
-    text-align: left !important;
-}
-
-.results-tables .leaderboard-table td {
-    padding: 1rem 0.75rem;
-    text-align: center;
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.results-tables .leaderboard-table tbody tr:nth-child(even) {
-    background: rgba(13, 157, 218, 0.03);
-}
-
-.results-tables .leaderboard-table tbody tr:hover {
-    background: rgba(13, 157, 218, 0.06);
-}
-
-.results-tables .leaderboard-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.results-tables .model-name {
-    text-align: left;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.results-tables .highlight {
-    font-weight: 700;
-    background: rgb(239, 246, 255);
-    border-radius: 4px;
-    padding: 2px 6px;
-}
-
-.results-tables .leaderboard-table tbody tr td:first-child strong {
-    background: #f3f4f6;
-    color: #374151;
-    font-weight: 700;
-    padding: 0.5rem;
-    border-radius: 4px;
-    display: block;
-    text-align: center;
-}
-
-@media (max-width: 768px) {
-    .subsection-title {
-        font-size: 1.25rem;
-    }
-
-    .results-tables .leaderboard-table {
-        font-size: 0.75rem;
-    }
-
-    .results-tables .leaderboard-table th,
-    .results-tables .leaderboard-table td {
-        padding: 0.5rem;
-    }
-}
-
-/* Extracted from inline styles */
-
-/* Example Image */
-.example-image {
-    text-align: center;
-    margin: 3rem 0;
-}
-
-.example-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.image-caption {
-    margin-top: 1rem;
-    color: #6b7280;
-    font-style: italic;
-    font-size: 0.875rem;
-}
-
-/* Task Categories */
-.task-categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.task-category {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-    transition: all 0.2s;
-}
-
-.task-category:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transform: translateY(-4px);
-}
-
-.task-header {
-    padding: 2rem;
-    background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.task-icon {
-    font-size: 2rem;
-}
-
-.task-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-.task-content {
-    padding: 2rem;
-}
-
-.task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.task-item {
-    padding: 1.5rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.task-item h4 {
-    color: #111827;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-}
-
-.task-item p {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-}
-
-.task-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-server {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-host {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.badge-user {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.task-count {
-    color: #6b7280;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-/* Leaderboard */
-.leaderboard-tabs {
-    margin-top: 3rem;
-}
-
-.tab-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
-.tab-button {
-    padding: 0.875rem 1.75rem;
-    border: 2px solid #e5e7eb;
-    background: white;
-    color: #374151;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    position: relative;
-    font-size: 1rem;
-}
-
-.tab-button:hover {
-    border-color: #2563eb;
-    background: #eff6ff;
-    color: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
-
-.tab-button.active {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-    border-color: #2563eb;
-    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
-    transform: translateY(-2px);
-}
-
-.tab-label {
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.tab-percentage {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.625rem;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.tab-button:not(.active) .tab-percentage {
-    background: #f3f4f6;
-    color: #6b7280;
-    padding: 0.25rem 0.625rem;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.tab-button:hover:not(.active) .tab-percentage {
-    background: #dbeafe;
-    color: #2563eb;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Insights */
-.insights {
-    margin-top: 3rem;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-}
-
-.insights h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.insights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.insight-card {
-    padding: 1.5rem;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.insight-card h4 {
-    color: #111827;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-}
-
-.insight-card p {
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-/* Security Section */
-
-.section-warning {
-    padding: 1rem;
-    background: #fef2f2;
-    border-top: 4px solid #ef4444;
-}
-
-.security-notice {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #fecaca;
-}
-
-.security-icon {
-    font-size: 2rem;
-}
-
-.security-notice h3 {
-    color: #dc2626;
-    font-size: 1.25rem;
-    font-weight: 600;
-}
-
-.security-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin: 1rem 0;
-}
-
-.security-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.security-card.critical {
-    border-color: #fecaca;
-    background: #fef2f2;
-}
-
-.security-card h4 {
-    color: #111827;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-}
-
-.security-card p,
-.security-card li {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-}
-
-.security-card ul {
-    padding-left: 1.5rem;
-}
-
-/* Results */
-.results-images {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.result-image {
-    text-align: center;
-}
-
-.result-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Attack Types */
-.attack-tabs {
-    margin-top: 3rem;
-}
-
-.attack-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.attack-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    transition: all 0.2s;
-}
-
-.attack-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-.attack-card h4 {
-    color: #111827;
-    margin-bottom: 0.75rem;
-    font-size: 1rem;
-}
-
-.attack-card p {
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
-/* Getting Started */
-.steps {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.step {
-    display: flex;
-    gap: 2rem;
-    align-items: flex-start;
-}
-
-.step-number {
-    background: #2563eb;
-    color: white;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    flex-shrink: 0;
-}
-
-.step-content h3 {
-    color: #111827;
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-}
-
-.step-content pre {
-    background: #1f2937;
-    color: #f3f4f6;
-    padding: 1rem;
-    border-radius: 8px;
-    overflow-x: auto;
-    font-size: 0.875rem;
-}
-
-.docs-link {
-    text-align: center;
-    margin-top: 3rem;
-    padding: 2rem;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.docs-link a {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.docs-link a:hover {
-    text-decoration: underline;
-}
-
-/* Footer */
-.footer {
-    background: #1f2937;
-    color: white;
-    padding: 3rem 0 2rem;
-    margin-top: 4rem;
-}
-
-.footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-}
-
-.footer-section h4 {
-    margin-bottom: 1rem;
-    color: white;
-}
-
-.footer-section p {
-    color: #d1d5db;
-    font-size: 0.875rem;
-}
-
-.footer-section ul {
-    list-style: none;
-}
-
-.footer-section ul li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section ul li a {
-    color: #d1d5db;
-    text-decoration: none;
-    font-size: 0.875rem;
-}
-
-.footer-section ul li a:hover {
-    color: white;
-}
-
-.footer-bottom {
-    text-align: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #374151;
-    color: #9ca3af;
-    font-size: 0.875rem;
-}
-
-/* Main Layout */
-.main-container {
-    display: flex;
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: calc(100vh - 80px);
-}
-
-/* Sidebar */
-.sidebar {
-    width: 280px;
-    background: white;
-    border-right: 1px solid #e5e7eb;
-    padding: 0;
-    position: sticky;
-    top: 80px;
-    height: calc(100vh - 80px);
-    overflow: hidden;
-    margin-top: 30px;
-    transition: transform 0.3s ease, width 0.3s ease;
-}
-
-.sidebar-content {
-    padding: 2rem 1.5rem;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE and Edge */
-}
-
-.sidebar-content::-webkit-scrollbar {
-    display: none;
-    /* Chrome, Safari, Opera */
-}
-
-.sidebar.hidden {
-    transform: translateX(-100%);
-    width: 0;
-    padding: 0;
-    border-right: none;
-    overflow: visible;
-}
-
-.sidebar.hidden .sidebar-content {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.sidebar-toggle {
-    position: absolute;
-    top: 50%;
-    right: -15px;
-    transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.sidebar-toggle:hover {
-    background: #f3f4f6;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.sidebar-toggle i {
-    color: #6b7280;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
-}
-
-.sidebar.hidden .sidebar-toggle {
-    right: -15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #2563eb;
-    border-color: #2563eb;
-}
-
-.sidebar.hidden .sidebar-toggle:hover {
-    background: #1d4ed8;
-}
-
-.sidebar.hidden .sidebar-toggle i {
-    color: white;
-}
-
-.sidebar.hidden+.content {
-    margin-left: 0;
-}
-
-.search-box {
-    position: relative;
-    margin-bottom: 2rem;
-}
-
-.search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-}
-
-.domain-nav {
-    list-style: none;
-}
-
-.domain-nav-item {
-    margin-bottom: 0.5rem;
-}
-
-.domain-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: #6b7280;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.domain-nav-link:hover,
-.domain-nav-link.active {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.domain-nav-icon {
-    font-size: 1.25rem;
-}
-
-/* Content */
-.content {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-.page-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 1rem;
-}
-
-.page-description {
-    font-size: 1.125rem;
-    color: #6b7280;
-    margin-bottom: 2rem;
-}
-
-
-.tasks-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-    gap: 1.5rem;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
-    opacity: 0;
-}
-
-.tasks-grid.expanded {
-    max-height: 10000px;
-    opacity: 1;
-    transition: max-height 0.6s ease-in, opacity 0.4s ease-in;
-}
-
-.tasks-grid.collapsed {
-    max-height: 0;
-    opacity: 0;
-}
-
-.task-card {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.task-card:hover {
-    border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-    transform: translateY(-2px);
-}
-
-.task-id {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #2563eb;
-    margin-bottom: 0.5rem;
-}
-
-.task-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.task-category {
-    display: inline-block;
-    background: #fef3c7;
-    color: #92400e;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
-
-.task-question {
-    color: #374151;
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.task-footer {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.attack-badge {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.view-btn {
-    margin-left: auto;
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.view-btn:hover {
-    background: #1d4ed8;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 1000px;
-    max-height: 90vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.modal-close:hover {
-    background: #f3f4f6;
-    color: #111827;
-}
-
-.modal-body {
-    padding: 1.5rem;
-    overflow-y: auto;
-}
-
-.json-viewer {
-    background: #1f2937;
-    color: #f3f4f6;
-    padding: 1.5rem;
-    border-radius: 8px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.loading {
-    text-align: center;
-    padding: 3rem;
-    color: #6b7280;
-}
-
-.spinner {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    border: 4px solid #e5e7eb;
-    border-top: 4px solid #2563eb;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-/* ========== 移动端 / 平板自适应（在现有样式基础上追加） ========== */
-
-/* 平板及以下：主布局与侧栏 */
-@media (max-width: 1024px) {
-    .header-container,
-    .main-content,
-    .footer-content {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-    }
-
-    .main-container {
-        flex-direction: column;
-        min-height: auto;
-    }
-
-    .sidebar {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        max-height: min(50vh, 320px);
-        position: relative;
-        top: 0;
-        margin-top: 0;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-
-    .sidebar-content {
-        max-height: min(45vh, 280px);
-        padding: 1rem 1.25rem;
-    }
-
-    .sidebar.hidden {
-        max-height: 0;
-        border-bottom: none;
-        overflow: hidden;
-    }
-
-    .sidebar.hidden .sidebar-content {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .sidebar-toggle {
-        right: 12px;
-        top: auto;
-        bottom: -14px;
-        transform: none;
-    }
-
-    .content {
-        padding: 1.25rem 1rem;
-        overflow-x: hidden;
-    }
-
-    .tasks-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .page-title {
-        font-size: clamp(1.5rem, 5vw, 2rem);
-    }
-
-    .section-title {
-        font-size: clamp(1.5rem, 5vw, 2rem);
-    }
-}
-
-@media (max-width: 768px) {
-    /* 修正大屏-only 的内边距，避免横向滚动 */
-    .section {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    /* 与 .nav-menu 并列：若页面用的是 .nav-links */
-    .nav-links {
-        flex-wrap: wrap;
-        gap: 0.75rem 1.25rem;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .logo {
-        width: 100%;
-        text-align: center;
-    }
-
-    .hero {
-        padding: 3rem 0;
-    }
-
-    .hero-title {
-        font-size: clamp(1.75rem, 6vw, 2.25rem);
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .hero-buttons .btn {
-        justify-content: center;
-        width: 100%;
-        max-width: 320px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .stats {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .stat-number {
-        font-size: 2rem;
-    }
-
-    .domain-header {
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
-
-    .domain-count {
-        margin-left: 0;
-    }
-
-    .tab-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .tab-button {
-        flex: 1 1 calc(50% - 0.5rem);
-        min-width: 140px;
-        justify-content: center;
-        padding: 0.65rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .results-images {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-content {
-        width: 100%;
-        max-width: 100%;
-        max-height: 100vh;
-        height: 100%;
-        border-radius: 0;
-    }
-
-    .modal-header,
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .baseline-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .baseline-toolbar .btn-switch {
-        flex: 1 1 auto;
-        min-height: 44px;
-    }
-
-    .security-notice {
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
-
-    .task-header {
-        flex-wrap: wrap;
-    }
-
-    .task-meta {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .view-btn {
-        margin-left: 0;
-        width: 100%;
-        min-height: 44px;
-    }
-
-    .task-footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-}
-
-/* 窄屏手机 */
-@media (max-width: 480px) {
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .tab-button {
-        flex: 1 1 100%;
-        min-width: 0;
-    }
-
-    .features-grid,
-    .task-categories,
-    .insights-grid,
-    .attack-grid,
-    .security-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .domain-stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .step {
-        gap: 1rem;
-    }
-
-    .step-number {
-        width: 48px;
-        height: 48px;
-        font-size: 1.125rem;
-    }
-}
-
-/* 横屏小高度：避免侧栏占满屏 */
-@media (max-width: 1024px) and (max-height: 500px) {
-    .sidebar,
-    .sidebar-content {
-        max-height: 200px;
-    }
-}
-/* Get Started：代码块在窄屏下不撑破布局，长行在 pre 内横向滚动
-   原因：.steps 为 flex-direction:column 时，.step 作为 flex 子项默认 min-width:auto，
-   会被超长 pre 内容在「横向」上撑开；仅给 .step-content 设 min-width:0 不够。
-   code 设 width:max-content 让最宽一行决定内部宽度，从而触发 pre 的 overflow-x。 */
-#getting-started .steps {
-    min-width: 0;
-    width: 100%;
-}
-
-#getting-started .steps > .step {
-    min-width: 0;
-    width: 100%;
-    max-width: 100%;
-}
-
-.steps .step,
-.step-content {
-    min-width: 0;
-}
-
-#getting-started .step-content {
-    width: 100%;
-    max-width: 100%;
-}
-
-.step-content pre,
-.step pre {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    margin-top: 1rem;
-    padding: 1rem 1.1rem;
-    border-radius: 8px;
-    box-sizing: border-box;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scrollbar-gutter: stable;
-}
-
-.step-content pre code,
-.step pre code {
-    display: block;
-    width: max-content;
-    min-width: 100%;
-    white-space: pre;
-    word-break: normal;
-    overflow-wrap: normal;
-    font-size: 0.85rem;
-    line-height: 1.45;
-}
-
-/* Copy：滚动在 .code-scroll；按钮相对 .code-scroll 定位 = 对齐「当前可见」代码块右缘，避免超出深蓝背景 */
-.code-with-copy {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-}
-
-.step-content .code-with-copy {
-    margin-top: 1rem;
-}
-
-.code-with-copy .code-scroll {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-    scrollbar-gutter: stable;
-}
-
-.step-content .code-with-copy .code-scroll pre {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-top: 2.5rem;
-    /* 由外层 div 负责滚动，pre 自身不建立横向滚动条 */
-    overflow-x: visible;
-    overflow-y: visible;
-    width: max-content;
-    min-width: 100%;
-    max-width: none;
-    box-sizing: border-box;
-}
-
-.code-scroll .copy-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 2;
-    max-width: calc(100% - 1rem);
-    padding: 0.35rem 0.75rem;
-    background: rgba(255, 255, 255, 0.92);
-    color: #1f2937;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 0.35rem;
-    cursor: pointer;
-    font-size: 0.75rem;
-    font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transition: opacity 0.25s ease, background 0.2s ease, color 0.2s ease;
-}
-
-.code-scroll:hover .copy-button,
-.code-scroll:focus-within .copy-button {
-    opacity: 1;
-}
-
-.code-scroll .copy-button.copy-button--success {
-    background: #10b981;
-    color: #fff;
-    border-color: #059669;
-    opacity: 1;
-}
-
-@media (hover: none) {
-    .code-scroll .copy-button {
-        opacity: 0.9;
-    }
-}
+  });
+});
+
+// Initialize on load
+document.addEventListener("DOMContentLoaded", initializeTasks);
