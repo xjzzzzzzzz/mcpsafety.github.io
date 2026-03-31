@@ -2168,3 +2168,56 @@ table.no-attack-inline td {
     font-size: 0.85rem;
     line-height: 1.45;
 }
+
+/* Copy 按钮挂在 pre 外，定位在可视区域右上角，不随 pre 内横向滚动移动 */
+.code-with-copy {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.step-content .code-with-copy {
+    margin-top: 1rem;
+}
+
+.step-content .code-with-copy pre {
+    margin-top: 0;
+    padding-top: 2.5rem;
+}
+
+.code-with-copy .copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    color: #1f2937;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 0.35rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.code-with-copy:hover .copy-button,
+.code-with-copy:focus-within .copy-button {
+    opacity: 1;
+}
+
+.code-with-copy .copy-button.copy-button--success {
+    background: #10b981;
+    color: #fff;
+    border-color: #059669;
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .code-with-copy .copy-button {
+        opacity: 0.9;
+    }
+}
