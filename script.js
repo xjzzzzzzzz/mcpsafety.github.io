@@ -214,7 +214,8 @@ document.addEventListener("DOMContentLoaded", function () {
     button.type = "button";
     button.className = "copy-button";
     button.textContent = "Copy";
-    scrollBox.appendChild(button);
+    /* 与 .code-scroll 平级挂在 wrapper 上：横向滚动只在 code-scroll 内，按钮不参与滚动 */
+    wrapper.appendChild(button);
 
     button.addEventListener("click", async () => {
       const code = block.textContent;
