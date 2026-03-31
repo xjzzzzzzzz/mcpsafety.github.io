@@ -2189,7 +2189,8 @@ table.no-attack-inline td {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
-    scrollbar-gutter: stable;
+    /* 不要用 scrollbar-gutter: stable：无横向滚动时会在右侧留出「槽位」，
+       pre 变窄而 Copy 仍贴容器右缘，按钮会跑出深蓝背景；有滚动条时视觉又对齐了 */
 }
 
 .step-content .code-with-copy .code-scroll pre {
@@ -2199,8 +2200,8 @@ table.no-attack-inline td {
     /* 由外层 div 负责滚动，pre 自身不建立横向滚动条 */
     overflow-x: visible;
     overflow-y: visible;
-    width: max-content;
-    min-width: 100%;
+    /* 短代码至少铺满一行宽（避免 pre 窄于容器、按钮相对容器右对齐时看起来「溢出」） */
+    width: max(100%, max-content);
     max-width: none;
     box-sizing: border-box;
 }
